@@ -143,87 +143,77 @@ def renameFiles():
 if __name__ == '__main__':
     root = tk.Tk()
     root.title('QuickRename')
-    root.geometry('500x400')
     root.configure()
 
     labelFont = font.Font(family='Helvetica', size=10)
     btnFont = font.Font(family='Helvetica', size=10)
 
     # frame up
-    frameUp = tk.Frame(root)
+    frameUp = tk.LabelFrame(root, text='Choose the directory')
     frameUp.grid(row=0, column=0)
-
-    frameDir = tk.LabelFrame(frameUp, text='Choose the directory')
-    frameDir.grid(row=0, column=0)
-    frameDir['font'] = labelFont
-
-    frameSubUp = tk.Frame(frameDir)
-    frameSubUp.grid(row=0, column=0)
+    frameUp['font'] = labelFont
     
     dirVariable = tk.StringVar()
-    tgtDirStrEntry = tk.Entry(frameSubUp, width=50, textvariable=dirVariable)
+    tgtDirStrEntry = tk.Entry(frameUp, width=50, textvariable=dirVariable)
     tgtDirStrEntry.grid(row=0, column=0)
 
-    chooseBtn = tk.Button(frameSubUp, text='Choose', command=openDir)
+    chooseBtn = tk.Button(frameUp, text='Choose', command=openDir)
     chooseBtn.grid(row=0, column=1)
 
-    frameSubDw = tk.Frame(frameDir)
-    frameSubDw.grid(row=1, column=0)
+    frameUpSub = tk.Frame(frameUp)
+    frameUpSub.grid(row=1, column=0)
 
-    applyLabel = tk.Label(frameSubDw, text='Apply to:')
+    applyLabel = tk.Label(frameUpSub, text='Apply to:')
     applyLabel.grid(row=0, column=0)
 
     applyValue = tk.IntVar() 
-    fileRadio = tk.Radiobutton(frameSubDw, text='Files', variable=applyValue, value=1)
+    fileRadio = tk.Radiobutton(frameUpSub, text='Files', variable=applyValue, value=1)
     fileRadio.grid(row=0, column=1)
     
-    folderRadio = tk.Radiobutton(frameSubDw, text='Folders', variable=applyValue, value=2)
+    folderRadio = tk.Radiobutton(frameUpSub, text='Folders', variable=applyValue, value=2)
     folderRadio.grid(row=0, column=2)
     applyValue.set(1)
 
-    readBtn = tk.Button(frameSubDw, text='Read', command=readFileNames, height=1, width=6)
-    readBtn.grid(row=0, column=3)
+    readBtn = tk.Button(frameUp, text='Read', command=readFileNames)
+    readBtn.grid(row=1, column=1)
     readBtn['font'] = btnFont
 
     # frame mid
-    frameMid = tk.Frame(root)
+    frameMid = tk.LabelFrame(root, text='Naming settings')
     frameMid.grid(row=1, column=0)
-
-    frameMidSub = tk.LabelFrame(frameMid, text='Naming settings')
-    frameMidSub.grid(row=0, column=0)
-    frameMidSub['font'] = labelFont
+    frameMid['font'] = labelFont
 
     replaceState = tk.IntVar()
-    replaceCheckBtn = tk.Checkbutton(frameMidSub, text='Replace text', command=changeConfigReplace, variable=replaceState, onvalue=1, offvalue=0)
+    replaceCheckBtn = tk.Checkbutton(frameMid, text='Replace text', command=changeConfigReplace, variable=replaceState, onvalue=1, offvalue=0)
     replaceCheckBtn.grid(row=0, column=0)
 
-    findLabel = tk.Label(frameMidSub, text='Find:')
+    findLabel = tk.Label(frameMid, text='Find:')
     findLabel.grid(row=0, column=1)
     
-    findEntry = tk.Entry(frameMidSub, width=5)
+    findEntry = tk.Entry(frameMid, width=5)
     findEntry.grid(row=0, column=2)
     
-    replaceLabel = tk.Label(frameMidSub, text='Replace:')
+    replaceLabel = tk.Label(frameMid, text='Replace:')
     replaceLabel.grid(row=0, column=3)
     
-    replaceEntry = tk.Entry(frameMidSub, width=5)
+    replaceEntry = tk.Entry(frameMid, width=5)
     replaceEntry.grid(row=0, column=4)
 
     findEntry.config(state='disabled')
     replaceEntry.config(state='disabled')
 
     orderState = tk.IntVar()
-    orderCheckBtn = tk.Checkbutton(frameMidSub, text='Make an order', command=changeConfigOrder, variable=orderState, onvalue=1, offvalue=0)
+    orderCheckBtn = tk.Checkbutton(frameMid, text='Make an order', command=changeConfigOrder, variable=orderState, onvalue=1, offvalue=0)
     orderCheckBtn.grid(row=1, column=0)
 
-    sepLabel = tk.Label(frameMidSub, text='Sep:')
+    sepLabel = tk.Label(frameMid, text='Sep:')
     sepLabel.grid(row=1, column=1)
 
     radioValue = tk.IntVar() 
-    prefixRadio = tk.Radiobutton(frameMidSub, text='_', variable=radioValue, value=1)
+    prefixRadio = tk.Radiobutton(frameMid, text='_', variable=radioValue, value=1)
     prefixRadio.grid(row=1, column=2)
     
-    suffixRadio = tk.Radiobutton(frameMidSub, text='-', variable=radioValue, value=2)
+    suffixRadio = tk.Radiobutton(frameMid, text='-', variable=radioValue, value=2)
     suffixRadio.grid(row=1, column=3)
 
     prefixRadio.config(state='disabled')
@@ -231,27 +221,24 @@ if __name__ == '__main__':
     radioValue.set(1)
 
     # frame down
-    frameDw = tk.Frame(root)
+    frameDw = tk.LabelFrame(root, text='Files list')
     frameDw.grid(row=2, column=0)
 
-    frameDwLeft = tk.LabelFrame(frameDw, text='Files list')
-    frameDwLeft.grid(row=0, column=0)
-
-    listBoxRead = tk.Listbox(frameDwLeft)
+    listBoxRead = tk.Listbox(frameDw)
     listBoxRead.grid(row=0, column=0)
 
-    listboxPreview = tk.Listbox(frameDwLeft)
+    listboxPreview = tk.Listbox(frameDw)
     listboxPreview.grid(row=0, column=1)
     
-    frameDwRight = tk.LabelFrame(frameDwLeft, text='Action')
-    frameDwRight.grid(row=0, column=2)
+    frameDwSub = tk.Frame(frameDw)
+    frameDwSub.grid(row=0, column=2)
 
-    upBtn = tk.Button(frameDwRight, text='Up', command=lambda: moveFileName(-1))
-    dwBtn = tk.Button(frameDwRight, text='Down', command=lambda: moveFileName(1))
-    preBtn = tk.Button(frameDwRight, text='Preview', command=previewFileNames)
-    runBtn = tk.Button(frameDwRight, text='Run',command=renameFiles)
+    upBtn = tk.Button(frameDwSub, text='Up', command=lambda: moveFileName(-1))
+    dwBtn = tk.Button(frameDwSub, text='Down', command=lambda: moveFileName(1))
+    preBtn = tk.Button(frameDwSub, text='Preview', command=previewFileNames)
+    runBtn = tk.Button(frameDwSub, text='Run',command=renameFiles)
     
-    for idx, widget in enumerate(frameDwRight.winfo_children()):
+    for idx, widget in enumerate(frameDwSub.winfo_children()):
         widget.grid(row=idx, column=0)
         widget['font'] = btnFont
 
