@@ -144,7 +144,6 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.title('QuickRename')
     root.geometry('500x400')
-    root.resizable(width=0, height=0)
     root.configure()
 
     labelFont = font.Font(family='Helvetica', size=10)
@@ -154,7 +153,7 @@ if __name__ == '__main__':
     frameUp = tk.Frame(root)
     frameUp.grid(row=0, column=0)
 
-    frameDir = tk.LabelFrame(frameUp, text='Choose the directory', width=450, height=60)
+    frameDir = tk.LabelFrame(frameUp, text='Choose the directory')
     frameDir.grid(row=0, column=0)
     frameDir['font'] = labelFont
 
@@ -165,8 +164,8 @@ if __name__ == '__main__':
     tgtDirStrEntry = tk.Entry(frameSubUp, width=50, textvariable=dirVariable)
     tgtDirStrEntry.grid(row=0, column=0)
 
-    btn1 = tk.Button(frameSubUp, text='Choose', command=openDir)
-    btn1.grid(row=0, column=1)
+    chooseBtn = tk.Button(frameSubUp, text='Choose', command=openDir)
+    chooseBtn.grid(row=0, column=1)
 
     frameSubDw = tk.Frame(frameDir)
     frameSubDw.grid(row=1, column=0)
@@ -182,15 +181,15 @@ if __name__ == '__main__':
     folderRadio.grid(row=0, column=2)
     applyValue.set(1)
 
-    btn2 = tk.Button(frameSubDw, text='Read', command=readFileNames, height=1, width=6)
-    btn2.grid(row=0, column=3, padx=2, pady=5)
-    btn2['font'] = btnFont
+    readBtn = tk.Button(frameSubDw, text='Read', command=readFileNames, height=1, width=6)
+    readBtn.grid(row=0, column=3)
+    readBtn['font'] = btnFont
 
     # frame mid
     frameMid = tk.Frame(root)
     frameMid.grid(row=1, column=0)
 
-    frameMidSub = tk.LabelFrame(frameMid, text='Naming settings', width=450, height=60)
+    frameMidSub = tk.LabelFrame(frameMid, text='Naming settings')
     frameMidSub.grid(row=0, column=0)
     frameMidSub['font'] = labelFont
 
@@ -202,7 +201,7 @@ if __name__ == '__main__':
     findLabel.grid(row=0, column=1)
     
     findEntry = tk.Entry(frameMidSub, width=5)
-    findEntry.grid(row=0, column=2,)
+    findEntry.grid(row=0, column=2)
     
     replaceLabel = tk.Label(frameMidSub, text='Replace:')
     replaceLabel.grid(row=0, column=3)
@@ -230,15 +229,13 @@ if __name__ == '__main__':
     prefixRadio.config(state='disabled')
     suffixRadio.config(state='disabled')
     radioValue.set(1)
-    
 
     # frame down
-    frameDw = tk.Frame(root, width=450, height=400)
+    frameDw = tk.Frame(root)
     frameDw.grid(row=2, column=0)
 
-    frameDwLeft = tk.LabelFrame(frameDw, text='Files list', width=330, height=200)
-    frameDwLeft.grid(row=0, column=0, padx=10, pady=5)
-    frameDwLeft.pack_propagate(0)
+    frameDwLeft = tk.LabelFrame(frameDw, text='Files list')
+    frameDwLeft.grid(row=0, column=0)
 
     listBoxRead = tk.Listbox(frameDwLeft)
     listBoxRead.grid(row=0, column=0)
@@ -247,15 +244,15 @@ if __name__ == '__main__':
     listboxPreview.grid(row=0, column=1)
     
     frameDwRight = tk.LabelFrame(frameDwLeft, text='Action')
-    frameDwRight.grid(row=0, column=2, padx=10, pady=5)
+    frameDwRight.grid(row=0, column=2)
 
-    btn3 = tk.Button(frameDwRight, text='Up', command=lambda: moveFileName(-1), height=1, width=6)
-    btn4 = tk.Button(frameDwRight, text='Down', command=lambda: moveFileName(1), height=1, width=6)
-    btn5 = tk.Button(frameDwRight, text='Preview', command=previewFileNames, height=1, width=6)
-    btn6 = tk.Button(frameDwRight, text='Run',command=renameFiles, height=1, width=6)
+    upBtn = tk.Button(frameDwRight, text='Up', command=lambda: moveFileName(-1))
+    dwBtn = tk.Button(frameDwRight, text='Down', command=lambda: moveFileName(1))
+    preBtn = tk.Button(frameDwRight, text='Preview', command=previewFileNames)
+    runBtn = tk.Button(frameDwRight, text='Run',command=renameFiles)
     
     for idx, widget in enumerate(frameDwRight.winfo_children()):
-        widget.grid(row=idx, column=0, padx=2, pady=5)
+        widget.grid(row=idx, column=0)
         widget['font'] = btnFont
 
     root.mainloop()
