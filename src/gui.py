@@ -4,11 +4,13 @@ from tkinter import filedialog
 from tkinter import font
 from math import floor, log10
 
-def OpenDir():
-    dirName = filedialog.askdirectory(title='Choose the directory')
-    tgtDirStr.set(dirName)
 
-def change_replace_config():
+def openDir():
+    dirName = filedialog.askdirectory(title='Choose the directory')
+    dirVariable.set(dirName)
+
+
+def changeConfigReplace():
     if replaceState.get():
         findEntry.config(state='normal')
         replaceEntry.config(state='normal')
@@ -16,7 +18,8 @@ def change_replace_config():
         findEntry.config(state='disabled')
         replaceEntry.config(state='disabled')
 
-def change_order_config():
+
+def changeConfigOrder():
     if orderState.get():
         prefixRadio.config(state='normal')
         suffixRadio.config(state= 'normal')
@@ -24,79 +27,85 @@ def change_order_config():
         prefixRadio.config(state='disabled')
         suffixRadio.config(state='disabled')
 
-def get_file_names_dict():
-    file_names_list = list(listbox_read.get(0, tk.END))
-    file_names_dict = {idx:file_name for idx, file_name in enumerate(file_names_list)}
-    return file_names_dict
 
-def clean_prefix(a_dict):
-    for key in a_dict.keys():
-        file_name_separated = a_dict[key].partition('_')
-        if file_name_separated[0].isdigit():
-            a_dict[key] = file_name_separated[-1]
+def getFileNamesDict():
+    fileNamesList = list(listBoxRead.get(0, tk.END))
+    fileNamesDict = {idx:fileName for idx, fileName in enumerate(fileNamesList)}
+    return fileNamesDict
+
+
+def cleanPrefix(aDict):
+    for key in aDict.keys():
+        fileNameSeparated = aDict[key].partition('_')
+        if fileNameSeparated[0].isdigit():
+            aDict[key] = fileNameSeparated[-1]
         
-        file_name_separated = a_dict[key].partition('-')
-        if file_name_separated[0].isdigit():
-            a_dict[key] = file_name_separated[-1]
-    return a_dict
+        fileNameSeparated = aDict[key].partition('-')
+        if fileNameSeparated[0].isdigit():
+            aDict[key] = fileNameSeparated[-1]
+    return aDict
 
 
-def revise_file_list(file_names_dict):
-    keys = list(file_names_dict.keys())
+def reviseFileList(fileNamesDict):
+    keys = list(fileNamesDict.keys())
     keys.sort()
 
-    listbox_read.delete(0, tk.END)
+    listBoxRead.delete(0, tk.END)
     for idx in keys:
-        listbox_read.insert(idx, file_names_dict[idx])
+        listBoxRead.insert(idx, fileNamesDict[idx])
 
-def switch_dict_key(aDict, key_ori, key_tgt):
-    tmp = aDict[key_ori]
-    aDict[key_ori] = aDict[key_tgt]
-    aDict[key_tgt] = tmp
 
-def read_dir_file_name():
-    tgtDir = tgtDirStr.get()
-    dir_names = os.listdir(tgtDir)
+def switchKey(aDict, keyOri, keyTgt):
+    tmp = aDict[keyOri]
+    aDict[keyOri] = aDict[keyTgt]
+    aDict[keyTgt] = tmp
+
+
+def readFileNames():
+    tgtdirName = dirVariable.get()
+    dirNames = os.listdir(tgtdirName)
 
     if applyValue.get() == 1:
-        names_list = [dir_name for dir_name in dir_names if os.path.isfile(os.path.join(tgtDir, dir_name))]
+        nameList = [dirName for dirName in dirNames if os.path.isfile(os.path.join(tgtdirName, dirName))]
     else:
-        names_list = [dir_name for dir_name in dir_names if not os.path.isfile(os.path.join(tgtDir, dir_name))]
+        nameList = [dirName for dirName in dirNames if not os.path.isfile(os.path.join(tgtdirName, dirName))]
 
-    listbox_read.delete(0, tk.END)
-    for idx, file_name in enumerate(names_list):
-        listbox_read.insert(idx, file_name)
+    listBoxRead.delete(0, tk.END)
+    for idx, fileName in enumerate(nameList):
+        listBoxRead.insert(idx, fileName)
 
-def move_file_name(inc):
+
+def moveFileName(inc):
     moved = False
-    file_names_dict = get_file_names_dict()
+    fileNamesDict = getFileNamesDict()
 
     if inc < 0:
-        id_last = 0
+        idLast = 0
     else:
-        id_last = len(file_names_dict) - 1
+        idLast = len(fileNamesDict) - 1
 
-    ids_selected = list(listbox_read.curselection())
-    for id_selected in ids_selected:
-        if abs(id_selected - id_last) > 0:
-            id_next = id_selected + inc
-            switch_dict_key(file_names_dict, id_selected, id_next)
+    idsSel = list(listBoxRead.curselection())
+    for id_ in idsSel:
+        if abs(id_ - idLast) > 0:
+            idNext = id_ + inc
+            switchKey(fileNamesDict, id_, idNext)
             moved = True
 
     if moved:
-        revise_file_list(file_names_dict)
-        listbox_read.select_set(id_next)
+        reviseFileList(fileNamesDict)
+        listBoxRead.select_set(idNext)
 
-def preview_file_names():
-    file_names_dict = get_file_names_dict()
-    file_names_dict = clean_prefix(file_names_dict)
+
+def previewFileNames():
+    fileNamesDict = getFileNamesDict()
+    fileNamesDict = cleanPrefix(fileNamesDict)
 
     if replaceState.get():
-        find_chr = findEntry.get()
-        replace_chr = replaceEntry.get()
-        file_names_rep = [file_names_dict[key].replace(find_chr, replace_chr) for key in file_names_dict.keys()]
+        findStr = findEntry.get()
+        replaceStr = replaceEntry.get()
+        fileNamesReplaced = [fileNamesDict[key].replace(findStr, replaceStr) for key in fileNamesDict.keys()]
     else:
-        file_names_rep = [file_names_dict[key] for key in file_names_dict.keys()]
+        fileNamesReplaced = [fileNamesDict[key] for key in fileNamesDict.keys()]
 
     if orderState.get():
         if radioValue.get() == 1:
@@ -104,26 +113,27 @@ def preview_file_names():
         else:
             sep = '-'
 
-        file_num = len(file_names_dict)
-        decimal = floor(log10(file_num)) + 1
-        file_names_ord = ['{idx:{fill}{width}}{sep}{file_name}'.format(idx=idx, fill='0', width=decimal, sep=sep, file_name=file_name) for idx, file_name in enumerate(file_names_rep)]
+        fileNum = len(fileNamesDict)
+        decimal = floor(log10(fileNum)) + 1
+        fileNamesOrdered = ['{idx:{fill}{width}}{sep}{fileName}'.format(idx=idx, fill='0', width=decimal, sep=sep, fileName=fileName) for idx, fileName in enumerate(fileNamesReplaced)]
     else:
-        file_names_ord = file_names_rep
+        fileNamesOrdered = fileNamesReplaced
 
-    listbox_preview.delete(0, tk.END)
-    for idx, file_name in enumerate(file_names_ord):
-        listbox_preview.insert(idx, file_name)
+    listboxPreview.delete(0, tk.END)
+    for idx, fileName in enumerate(fileNamesOrdered):
+        listboxPreview.insert(idx, fileName)
 
-def rename_files():
-    tgtDir = tgtDirStr.get()
-    file_names_list_src = list(listbox_read.get(0, tk.END))
-    file_names_list_dst = list(listbox_preview.get(0, tk.END))
+
+def renameFiles():
+    tgtdirName = dirVariable.get()
+    fileNameListSrc = list(listBoxRead.get(0, tk.END))
+    fileNameListDst = list(listboxPreview.get(0, tk.END))
 
     try:
-        for file_name_src, file_name_dst in zip(file_names_list_src, file_names_list_dst):
-            file_dir_src = os.path.join(tgtDir, file_name_src)
-            file_dir_dst = os.path.join(tgtDir, file_name_dst)
-            os.rename(src=file_dir_src, dst=file_dir_dst)
+        for fileNameSrc, fileNameDst in zip(fileNameListSrc, fileNameListDst):
+            fileDirSrc = os.path.join(tgtdirName, fileNameSrc)
+            fileDirDst = os.path.join(tgtdirName, fileNameDst)
+            os.rename(src=fileDirSrc, dst=fileDirDst)
     except:
         tk.messagebox.showerror("Error", ":(")
     else:
@@ -151,11 +161,11 @@ if __name__ == '__main__':
     frameSubUp = tk.Frame(frameDir)
     frameSubUp.grid(row=0, column=0)
     
-    tgtDirStr = tk.StringVar()
-    tgtDirStrEntry = tk.Entry(frameSubUp, width=50, textvariable=tgtDirStr)
+    dirVariable = tk.StringVar()
+    tgtDirStrEntry = tk.Entry(frameSubUp, width=50, textvariable=dirVariable)
     tgtDirStrEntry.grid(row=0, column=0)
 
-    btn1 = tk.Button(frameSubUp, text='Choose', command=OpenDir)
+    btn1 = tk.Button(frameSubUp, text='Choose', command=openDir)
     btn1.grid(row=0, column=1)
 
     frameSubDw = tk.Frame(frameDir)
@@ -172,7 +182,7 @@ if __name__ == '__main__':
     folderRadio.grid(row=0, column=2)
     applyValue.set(1)
 
-    btn2 = tk.Button(frameSubDw, text='Read', command=read_dir_file_name, height=1, width=6)
+    btn2 = tk.Button(frameSubDw, text='Read', command=readFileNames, height=1, width=6)
     btn2.grid(row=0, column=3, padx=2, pady=5)
     btn2['font'] = btnFont
 
@@ -185,7 +195,7 @@ if __name__ == '__main__':
     frameMidSub['font'] = labelFont
 
     replaceState = tk.IntVar()
-    replaceCheckBtn = tk.Checkbutton(frameMidSub, text='Replace text', command=change_replace_config, variable=replaceState, onvalue=1, offvalue=0)
+    replaceCheckBtn = tk.Checkbutton(frameMidSub, text='Replace text', command=changeConfigReplace, variable=replaceState, onvalue=1, offvalue=0)
     replaceCheckBtn.grid(row=0, column=0)
 
     findLabel = tk.Label(frameMidSub, text='Find:')
@@ -204,7 +214,7 @@ if __name__ == '__main__':
     replaceEntry.config(state='disabled')
 
     orderState = tk.IntVar()
-    orderCheckBtn = tk.Checkbutton(frameMidSub, text='Make an order', command=change_order_config, variable=orderState, onvalue=1, offvalue=0)
+    orderCheckBtn = tk.Checkbutton(frameMidSub, text='Make an order', command=changeConfigOrder, variable=orderState, onvalue=1, offvalue=0)
     orderCheckBtn.grid(row=1, column=0)
 
     sepLabel = tk.Label(frameMidSub, text='Sep:')
@@ -230,19 +240,19 @@ if __name__ == '__main__':
     frameDwLeft.grid(row=0, column=0, padx=10, pady=5)
     frameDwLeft.pack_propagate(0)
 
-    listbox_read = tk.Listbox(frameDwLeft)
-    listbox_read.grid(row=0, column=0)
+    listBoxRead = tk.Listbox(frameDwLeft)
+    listBoxRead.grid(row=0, column=0)
 
-    listbox_preview = tk.Listbox(frameDwLeft)
-    listbox_preview.grid(row=0, column=1)
+    listboxPreview = tk.Listbox(frameDwLeft)
+    listboxPreview.grid(row=0, column=1)
     
     frameDwRight = tk.LabelFrame(frameDwLeft, text='Action')
     frameDwRight.grid(row=0, column=2, padx=10, pady=5)
 
-    btn3 = tk.Button(frameDwRight, text='Up', command=lambda: move_file_name(-1), height=1, width=6)
-    btn4 = tk.Button(frameDwRight, text='Down', command=lambda: move_file_name(1), height=1, width=6)
-    btn5 = tk.Button(frameDwRight, text='Preview', command=preview_file_names, height=1, width=6)
-    btn6 = tk.Button(frameDwRight, text='Run',command=rename_files, height=1, width=6)
+    btn3 = tk.Button(frameDwRight, text='Up', command=lambda: moveFileName(-1), height=1, width=6)
+    btn4 = tk.Button(frameDwRight, text='Down', command=lambda: moveFileName(1), height=1, width=6)
+    btn5 = tk.Button(frameDwRight, text='Preview', command=previewFileNames, height=1, width=6)
+    btn6 = tk.Button(frameDwRight, text='Run',command=renameFiles, height=1, width=6)
     
     for idx, widget in enumerate(frameDwRight.winfo_children()):
         widget.grid(row=idx, column=0, padx=2, pady=5)
