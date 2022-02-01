@@ -143,6 +143,7 @@ def renameFiles():
 if __name__ == '__main__':
     root = tk.Tk()
     root.title('QuickRename')
+    root.resizable(width=0, height=0)
     root.configure()
 
     labelFont = font.Font(family='Helvetica', size=10)
@@ -232,7 +233,7 @@ if __name__ == '__main__':
     radioValue.set(1)
 
     # frame down
-    frameDw = tk.LabelFrame(root, text='Files list')
+    frameDw = tk.LabelFrame(root, text='File list')
     frameDw.grid(row=2, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
     frameDw['font'] = labelFont
     
