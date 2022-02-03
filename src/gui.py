@@ -23,9 +23,13 @@ def changeConfigOrder():
     if orderState.get():
         prefixRadio.config(state='normal')
         suffixRadio.config(state= 'normal')
+        upBtn['state'] = tk.NORMAL
+        dwBtn['state'] = tk.NORMAL
     else:
         prefixRadio.config(state='disabled')
         suffixRadio.config(state='disabled')
+        upBtn['state'] = tk.DISABLED
+        dwBtn['state'] = tk.DISABLED
 
 
 def getFileNamesDict():
@@ -127,6 +131,16 @@ def previewFileNames():
     for idx, fileName in enumerate(fileNamesOrdered):
         listBoxPreview.insert(idx, fileName)
 
+    # Check repeated file names
+    global nameRepeated
+    nameRepeated = False
+    for idx1, fileName1 in enumerate(fileNamesOrdered):
+        for idx2, fileName2 in enumerate(fileNamesOrdered[idx1+1:]):
+            if fileName2 == fileName1:
+                nameRepeated = True
+                listBoxPreview.itemconfig(idx1, {'bg':'red'})
+                listBoxPreview.itemconfig(idx1+idx2+1, {'bg':'red'})
+
 
 def renameFiles():
     tgtdirName = dirVariable.get()
@@ -134,17 +148,20 @@ def renameFiles():
     fileNameListDst = list(listBoxPreview.get(0, tk.END))
 
     try:
-        for fileNameSrc, fileNameDst in zip(fileNameListSrc, fileNameListDst):
-            fileDirSrc = os.path.join(tgtdirName, fileNameSrc)
-            fileDirDst = os.path.join(tgtdirName, fileNameDst)
-            os.rename(src=fileDirSrc, dst=fileDirDst)
-    except:
-        tk.messagebox.showerror("Error", ":(")
+        if nameRepeated:
+            raise Exception('There are repeated file names after renaming.')
+        else:
+            for fileNameSrc, fileNameDst in zip(fileNameListSrc, fileNameListDst):
+                fileDirSrc = os.path.join(tgtdirName, fileNameSrc)
+                fileDirDst = os.path.join(tgtdirName, fileNameDst)
+                os.rename(src=fileDirSrc, dst=fileDirDst)
+    except Exception as e:
+        tk.messagebox.showerror("Error", e.args[0])
+        listBoxPreview.delete(0, tk.END)
     else:
         tk.messagebox.showinfo("Message", "All files have been renamed successfully.")
-
-    listBoxRead.delete(0, tk.END)
-    listBoxPreview.delete(0, tk.END)
+        listBoxRead.delete(0, tk.END)
+        listBoxPreview.delete(0, tk.END)
 
 
 if __name__ == '__main__':
@@ -260,7 +277,9 @@ if __name__ == '__main__':
     dwBtn = tk.Button(frameDwRight, text='Down', command=lambda: moveFileName(1), width=6)
     preBtn = tk.Button(frameDwRight, text='Preview', command=previewFileNames, width=6)
     runBtn = tk.Button(frameDwRight, text='Run',command=renameFiles, width=6)
-    
+    upBtn['state'] = tk.DISABLED
+    dwBtn['state'] = tk.DISABLED
+
     for idx, widget in enumerate(frameDwRight.winfo_children()):
         widget.grid(row=idx, column=0, padx=4, pady=4, ipadx=1, ipady=1)
         widget['font'] = btnFont
