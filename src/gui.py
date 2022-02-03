@@ -53,13 +53,18 @@ def cleanPrefix(aList):
     return bList
 
 
+def refreshListBox(listBox, nameList):
+    listBox.delete(0, tk.END)
+    for idx, name in enumerate(nameList):
+        listBox.insert(idx, name)
+
+
 def reviseFileList(fileNamesDict):
     keys = list(fileNamesDict.keys())
     keys.sort()
 
-    listBoxRead.delete(0, tk.END)
-    for idx in keys:
-        listBoxRead.insert(idx, fileNamesDict[idx])
+    nameList = [fileNamesDict[key] for key in keys]
+    refreshListBox(listBoxRead, nameList)
 
 
 def switchKey(aDict, keyOri, keyTgt):
@@ -77,9 +82,7 @@ def readFileNames():
     else:
         nameList = [dirName for dirName in dirNames if not os.path.isfile(os.path.join(tgtdirName, dirName))]
 
-    listBoxRead.delete(0, tk.END)
-    for idx, fileName in enumerate(nameList):
-        listBoxRead.insert(idx, fileName)
+    refreshListBox(listBoxRead, nameList)
 
 
 def moveFileName(inc):
@@ -103,16 +106,17 @@ def moveFileName(inc):
         listBoxRead.select_set(idNext)
 
 
-def previewFileNames():
-    fileNamesDict = getFileNamesDict()
-
+def replaceFileNames(fileNamesDict):
     if replaceState.get():
         findStr = findEntry.get()
         replaceStr = replaceEntry.get()
         fileNamesReplaced = [fileNamesDict[key].replace(findStr, replaceStr) for key in fileNamesDict.keys()]
     else:
         fileNamesReplaced = [fileNamesDict[key] for key in fileNamesDict.keys()]
+    return fileNamesReplaced
 
+
+def reorderFileNames(fileNamesReplaced):
     if orderState.get():
         fileNamesReplaced = cleanPrefix(fileNamesReplaced)
 
@@ -121,25 +125,33 @@ def previewFileNames():
         else:
             sep = '-'
 
-        fileNum = len(fileNamesDict)
+        fileNum = len(fileNamesReplaced)
         decimal = floor(log10(fileNum)) + 1
         fileNamesOrdered = ['{idx:{fill}{width}}{sep}{fileName}'.format(idx=idx, fill='0', width=decimal, sep=sep, fileName=fileName) for idx, fileName in enumerate(fileNamesReplaced)]
     else:
         fileNamesOrdered = fileNamesReplaced
+    return fileNamesOrdered
 
-    listBoxPreview.delete(0, tk.END)
-    for idx, fileName in enumerate(fileNamesOrdered):
-        listBoxPreview.insert(idx, fileName)
 
-    # Check repeated file names
+def checkRepeatedItems(listBox, nameList):
     global nameRepeated
     nameRepeated = False
-    for idx1, fileName1 in enumerate(fileNamesOrdered):
-        for idx2, fileName2 in enumerate(fileNamesOrdered[idx1+1:]):
-            if fileName2 == fileName1:
+
+    for idx1, name1 in enumerate(nameList):
+        for idx2, name2 in enumerate(nameList[idx1+1:]):
+            if name2 == name1:
                 nameRepeated = True
-                listBoxPreview.itemconfig(idx1, {'bg':'red'})
-                listBoxPreview.itemconfig(idx1+idx2+1, {'bg':'red'})
+                listBox.itemconfig(idx1, {'bg':'red'})
+                listBox.itemconfig(idx1+idx2+1, {'bg':'red'})
+
+
+def previewFileNames():
+    fileNamesDict = getFileNamesDict()
+    fileNamesReplaced = replaceFileNames(fileNamesDict)
+    fileNamesOrdered = reorderFileNames(fileNamesReplaced)
+
+    refreshListBox(listBoxPreview, fileNamesOrdered)
+    checkRepeatedItems(listBoxPreview, fileNamesOrdered)
 
 
 def renameFiles():
