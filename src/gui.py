@@ -34,16 +34,19 @@ def getFileNamesDict():
     return fileNamesDict
 
 
-def cleanPrefix(aDict):
-    for key in aDict.keys():
-        fileNameSeparated = aDict[key].partition('_')
+def cleanPrefix(aList):
+    bList = []
+    for fileName in aList:
+        fileNameSeparated = fileName.partition('_')
         if fileNameSeparated[0].isdigit():
-            aDict[key] = fileNameSeparated[-1]
-        
-        fileNameSeparated = aDict[key].partition('-')
+            fileName = fileNameSeparated[-1]
+    
+        fileNameSeparated = fileName.partition('-')
         if fileNameSeparated[0].isdigit():
-            aDict[key] = fileNameSeparated[-1]
-    return aDict
+            fileName = fileNameSeparated[-1]
+    
+        bList.append(fileName)
+    return bList
 
 
 def reviseFileList(fileNamesDict):
@@ -98,7 +101,6 @@ def moveFileName(inc):
 
 def previewFileNames():
     fileNamesDict = getFileNamesDict()
-    fileNamesDict = cleanPrefix(fileNamesDict)
 
     if replaceState.get():
         findStr = findEntry.get()
@@ -108,6 +110,8 @@ def previewFileNames():
         fileNamesReplaced = [fileNamesDict[key] for key in fileNamesDict.keys()]
 
     if orderState.get():
+        fileNamesReplaced = cleanPrefix(fileNamesReplaced)
+
         if radioValue.get() == 1:
             sep = '_'
         else:
@@ -119,15 +123,15 @@ def previewFileNames():
     else:
         fileNamesOrdered = fileNamesReplaced
 
-    listboxPreview.delete(0, tk.END)
+    listBoxPreview.delete(0, tk.END)
     for idx, fileName in enumerate(fileNamesOrdered):
-        listboxPreview.insert(idx, fileName)
+        listBoxPreview.insert(idx, fileName)
 
 
 def renameFiles():
     tgtdirName = dirVariable.get()
     fileNameListSrc = list(listBoxRead.get(0, tk.END))
-    fileNameListDst = list(listboxPreview.get(0, tk.END))
+    fileNameListDst = list(listBoxPreview.get(0, tk.END))
 
     try:
         for fileNameSrc, fileNameDst in zip(fileNameListSrc, fileNameListDst):
@@ -138,6 +142,9 @@ def renameFiles():
         tk.messagebox.showerror("Error", ":(")
     else:
         tk.messagebox.showinfo("Message", "All files have been renamed successfully.")
+
+    listBoxRead.delete(0, tk.END)
+    listBoxPreview.delete(0, tk.END)
 
 
 if __name__ == '__main__':
@@ -187,7 +194,7 @@ if __name__ == '__main__':
     readBtn['font'] = btnFont
 
     # frame mid
-    frameMid = tk.LabelFrame(root, text='Naming settings')
+    frameMid = tk.LabelFrame(root, text='Naming method')
     frameMid.grid(row=1, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
     frameMid['font'] = labelFont
 
@@ -246,8 +253,8 @@ if __name__ == '__main__':
     listBoxRead = tk.Listbox(frameDwLeft, width=24)
     listBoxRead.grid(row=0, column=0, padx=4, pady=4)
 
-    listboxPreview = tk.Listbox(frameDwLeft, width=24)
-    listboxPreview.grid(row=0, column=1, padx=4, pady=4)
+    listBoxPreview = tk.Listbox(frameDwLeft, width=24)
+    listBoxPreview.grid(row=0, column=1, padx=4, pady=4)
 
     upBtn = tk.Button(frameDwRight, text='Up', command=lambda: moveFileName(-1), width=6)
     dwBtn = tk.Button(frameDwRight, text='Down', command=lambda: moveFileName(1), width=6)
