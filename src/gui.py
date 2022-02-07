@@ -240,14 +240,14 @@ if __name__ == '__main__':
     findLabel = tk.Label(frameMidUp, text='Find:')
     findLabel.grid(row=0, column=1, padx=4, pady=4)
     
-    findEntry = tk.Entry(frameMidUp, width=8)
+    findEntry = tk.Entry(frameMidUp, width=13)
     findEntry.grid(row=0, column=2, padx=4, pady=4)
     findEntry.config(state='disabled')
     
     replaceLabel = tk.Label(frameMidUp, text='Replace:')
     replaceLabel.grid(row=0, column=3, padx=4, pady=4)
     
-    replaceEntry = tk.Entry(frameMidUp, width=8)
+    replaceEntry = tk.Entry(frameMidUp, width=13)
     replaceEntry.grid(row=0, column=4, padx=4, pady=4)
     replaceEntry.config(state='disabled')
 
