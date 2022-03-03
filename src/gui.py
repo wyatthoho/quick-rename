@@ -185,10 +185,14 @@ def renameFiles():
 
 
 if __name__ == '__main__':
+    fileDir = os.path.dirname(__file__)
+    pardir = os.path.abspath(os.path.join(fileDir, os.path.pardir))
+    logoPath = os.path.join(pardir, 'image', 'w.ico')
+
     root = tk.Tk()
     root.title('QuickRename')
     root.resizable(width=0, height=0)
-    root.configure()
+    root.iconbitmap(logoPath)
 
     labelFont = font.Font(family='Helvetica', size=10)
     btnFont = font.Font(family='Helvetica', size=10)
