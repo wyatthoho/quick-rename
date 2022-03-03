@@ -21,13 +21,15 @@ def changeConfigReplace():
 
 def changeConfigOrder():
     if orderState.get():
-        prefixRadio.config(state='normal')
-        suffixRadio.config(state= 'normal')
+        prefixRadio1.config(state='normal')
+        prefixRadio2.config(state= 'normal')
+        prefixRadio3.config(state= 'normal')
         upBtn['state'] = tk.NORMAL
         dwBtn['state'] = tk.NORMAL
     else:
-        prefixRadio.config(state='disabled')
-        suffixRadio.config(state='disabled')
+        prefixRadio1.config(state='disabled')
+        prefixRadio2.config(state='disabled')
+        prefixRadio3.config(state='disabled')
         upBtn['state'] = tk.DISABLED
         dwBtn['state'] = tk.DISABLED
 
@@ -46,6 +48,10 @@ def cleanPrefix(aList):
             fileName = fileNameSeparated[-1]
     
         fileNameSeparated = fileName.partition('-')
+        if fileNameSeparated[0].isdigit():
+            fileName = fileNameSeparated[-1]
+    
+        fileNameSeparated = fileName.partition(' ')
         if fileNameSeparated[0].isdigit():
             fileName = fileNameSeparated[-1]
     
@@ -122,8 +128,10 @@ def reorderFileNames(fileNamesReplaced):
 
         if radioValue.get() == 1:
             sep = '_'
-        else:
+        elif radioValue.get() == 2:
             sep = '-'
+        elif radioValue.get() == 3:
+            sep = ' '
 
         fileNum = len(fileNamesReplaced)
         decimal = floor(log10(fileNum)) + 1
@@ -259,13 +267,17 @@ if __name__ == '__main__':
     sepLabel.grid(row=1, column=1, padx=4, pady=4)
 
     radioValue = tk.IntVar() 
-    prefixRadio = tk.Radiobutton(frameMidDw, text='_', variable=radioValue, value=1)
-    prefixRadio.grid(row=1, column=2, padx=4, pady=4)
-    prefixRadio.config(state='disabled')
+    prefixRadio1 = tk.Radiobutton(frameMidDw, text='_', variable=radioValue, value=1)
+    prefixRadio1.grid(row=1, column=2, padx=4, pady=4)
+    prefixRadio1.config(state='disabled')
     
-    suffixRadio = tk.Radiobutton(frameMidDw, text='-', variable=radioValue, value=2)
-    suffixRadio.grid(row=1, column=3, padx=4, pady=4)
-    suffixRadio.config(state='disabled')
+    prefixRadio2 = tk.Radiobutton(frameMidDw, text='-', variable=radioValue, value=2)
+    prefixRadio2.grid(row=1, column=3, padx=4, pady=4)
+    prefixRadio2.config(state='disabled')
+    
+    prefixRadio3 = tk.Radiobutton(frameMidDw, text='space', variable=radioValue, value=3)
+    prefixRadio3.grid(row=1, column=4, padx=4, pady=4)
+    prefixRadio3.config(state='disabled')
     radioValue.set(1)
 
     # frame down
