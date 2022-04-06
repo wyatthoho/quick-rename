@@ -34,6 +34,13 @@ def changeConfigOrder():
         dwBtn['state'] = tk.DISABLED
 
 
+def changeConfigSuffix():
+    if suffixState.get():
+        suffixEntry.config(state='normal')
+    else:
+        suffixEntry.config(state='disabled')
+
+
 def getFileNamesDict():
     fileNamesList = list(listBoxRead.get(0, tk.END))
     fileNamesDict = {idx:fileName for idx, fileName in enumerate(fileNamesList)}
@@ -112,7 +119,7 @@ def moveFileName(inc):
         listBoxRead.select_set(idNext)
 
 
-def replaceFileNames(fileNamesDict):
+def replaceFileNames(fileNamesDict: dict):
     if replaceState.get():
         findStr = findEntry.get()
         replaceStr = replaceEntry.get()
@@ -122,9 +129,18 @@ def replaceFileNames(fileNamesDict):
     return fileNamesReplaced
 
 
-def reorderFileNames(fileNamesReplaced):
+def addSuffixFileNames(fileNames: list):
+    if suffixState.get():
+        suffix = suffixEntry.get()
+        newFileNames = [ ''.join([_str + suffix if idx==0 else _str for idx, _str in enumerate(name.rpartition('.'))]) for name in fileNames]
+    else:
+        newFileNames = fileNames
+    return newFileNames
+
+
+def reorderFileNames(fileNames: list):
     if orderState.get():
-        fileNamesReplaced = cleanPrefix(fileNamesReplaced)
+        fileNames = cleanPrefix(fileNames)
 
         if radioValue.get() == 1:
             sep = '_'
@@ -133,11 +149,11 @@ def reorderFileNames(fileNamesReplaced):
         elif radioValue.get() == 3:
             sep = ' '
 
-        fileNum = len(fileNamesReplaced)
+        fileNum = len(fileNames)
         decimal = floor(log10(fileNum)) + 1
-        fileNamesOrdered = ['{idx:{fill}{width}}{sep}{fileName}'.format(idx=idx, fill='0', width=decimal, sep=sep, fileName=fileName) for idx, fileName in enumerate(fileNamesReplaced)]
+        fileNamesOrdered = ['{idx:{fill}{width}}{sep}{fileName}'.format(idx=idx, fill='0', width=decimal, sep=sep, fileName=fileName) for idx, fileName in enumerate(fileNames)]
     else:
-        fileNamesOrdered = fileNamesReplaced
+        fileNamesOrdered = fileNames
     return fileNamesOrdered
 
 
@@ -156,7 +172,8 @@ def checkRepeatedItems(listBox, nameList):
 def previewFileNames():
     fileNamesDict = getFileNamesDict()
     fileNamesReplaced = replaceFileNames(fileNamesDict)
-    fileNamesOrdered = reorderFileNames(fileNamesReplaced)
+    fileNamesSuffix = addSuffixFileNames(fileNamesReplaced)
+    fileNamesOrdered = reorderFileNames(fileNamesSuffix)
 
     refreshListBox(listBoxPreview, fileNamesOrdered)
     checkRepeatedItems(listBoxPreview, fileNamesOrdered)
@@ -242,9 +259,12 @@ if __name__ == '__main__':
     frameMidUp = tk.Frame(frameMid)
     frameMidUp.grid(row=0, column=0, sticky=tk.W)
 
-    frameMidDw = tk.Frame(frameMid)
-    frameMidDw.grid(row=1, column=0, sticky=tk.W)
+    frameMidMid = tk.Frame(frameMid)
+    frameMidMid.grid(row=1, column=0, sticky=tk.W)
 
+    frameMidDw = tk.Frame(frameMid)
+    frameMidDw.grid(row=2, column=0, sticky=tk.W)
+    
     replaceState = tk.IntVar()
     replaceCheckBtn = tk.Checkbutton(frameMidUp, text='Replace text', command=changeConfigReplace, variable=replaceState, onvalue=1, offvalue=0)
     replaceCheckBtn.grid(row=0, column=0, padx=4, pady=4)
@@ -262,6 +282,17 @@ if __name__ == '__main__':
     replaceEntry = tk.Entry(frameMidUp, width=13)
     replaceEntry.grid(row=0, column=4, padx=4, pady=4)
     replaceEntry.config(state='disabled')
+
+    suffixState = tk.IntVar()
+    suffixCheckBtn = tk.Checkbutton(frameMidMid, text='Add suffix', command=changeConfigSuffix, variable=suffixState, onvalue=1, offvalue=0)
+    suffixCheckBtn.grid(row=0, column=0, padx=4, pady=4)
+
+    suffixLabel = tk.Label(frameMidMid, text='Suffix:')
+    suffixLabel.grid(row=0, column=1, padx=4, pady=4)
+    
+    suffixEntry = tk.Entry(frameMidMid, width=13)
+    suffixEntry.grid(row=0, column=2, padx=4, pady=4)
+    suffixEntry.config(state='disabled')
 
     orderState = tk.IntVar()
     orderCheckBtn = tk.Checkbutton(frameMidDw, text='Make an order', command=changeConfigOrder, variable=orderState, onvalue=1, offvalue=0)
