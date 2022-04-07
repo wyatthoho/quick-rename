@@ -41,12 +41,6 @@ def configSuffix():
         suffixEntry.config(state='disabled')
 
 
-def getNamesDict():
-    names = list(listBoxRead.get(0, tk.END))
-    namesDict = {idx:name for idx, name in enumerate(names)}
-    return namesDict
-
-
 def cleanPrefix(names: list):
     newNames = []
     for name in names:
@@ -86,7 +80,8 @@ def readNames():
 
 def moveName(inc: int):
     moved = False
-    namesDict = getNamesDict()
+    names = list(listBoxRead.get(0, tk.END))
+    namesDict = {idx:name for idx, name in enumerate(names)}
 
     if inc < 0:
         idBoundary = 0
@@ -107,42 +102,29 @@ def moveName(inc: int):
         listBoxRead.select_set(idNext)
 
 
-def replaceNames(namesDict: dict):
-    if replaceState.get():
-        findStr = findEntry.get()
-        replaceStr = replaceEntry.get()
-        namesReplaced = [namesDict[key].replace(findStr, replaceStr) for key in namesDict.keys()]
-    else:
-        namesReplaced = [namesDict[key] for key in namesDict.keys()]
-    return namesReplaced
+def replaceNames(names: list):
+    findStr = findEntry.get()
+    replaceStr = replaceEntry.get()
+    return [name.replace(findStr, replaceStr) for name in names]
 
 
 def addSuffix(names: list):
-    if suffixState.get():
-        suffix = suffixEntry.get()
-        newNames = [ ''.join([_str + suffix if idx==0 else _str for idx, _str in enumerate(name.rpartition('.'))]) for name in names]
-    else:
-        newNames = names
-    return newNames
+    suffix = suffixEntry.get()
+    return [ ''.join([_str + suffix if idx==0 else _str for idx, _str in enumerate(name.rpartition('.'))]) for name in names]
 
 
 def reorderNames(names: list):
-    if orderState.get():
-        names = cleanPrefix(names)
+    names = cleanPrefix(names)
+    if radioValue.get() == 1:
+        sep = '_'
+    elif radioValue.get() == 2:
+        sep = '-'
+    elif radioValue.get() == 3:
+        sep = ' '
 
-        if radioValue.get() == 1:
-            sep = '_'
-        elif radioValue.get() == 2:
-            sep = '-'
-        elif radioValue.get() == 3:
-            sep = ' '
-
-        numName = len(names)
-        decimal = floor(log10(numName)) + 1
-        newNames = ['{idx:{fill}{width}}{sep}{name}'.format(idx=idx, fill='0', width=decimal, sep=sep, name=name) for idx, name in enumerate(names)]
-    else:
-        newNames = names
-    return newNames
+    numName = len(names)
+    decimal = floor(log10(numName)) + 1
+    return ['{idx:{fill}{width}}{sep}{name}'.format(idx=idx, fill='0', width=decimal, sep=sep, name=name) for idx, name in enumerate(names)]
 
 
 def checkRepeated(listBox: tk.Listbox, names: list):
@@ -158,13 +140,16 @@ def checkRepeated(listBox: tk.Listbox, names: list):
 
 
 def previewNames():
-    namesDict = getNamesDict()
-    namesReplaced = replaceNames(namesDict)
-    namesSuffix = addSuffix(namesReplaced)
-    namesOrdered = reorderNames(namesSuffix)
+    names = list(listBoxRead.get(0, tk.END))
+    if replaceState.get():
+        names = replaceNames(names)
+    if suffixState.get():
+        names = addSuffix(names)
+    if orderState.get():
+        names = reorderNames(names)
 
-    refreshListBox(listBoxPreview, namesOrdered)
-    checkRepeated(listBoxPreview, namesOrdered)
+    refreshListBox(listBoxPreview, names)
+    checkRepeated(listBoxPreview, names)
 
 
 def rename():
