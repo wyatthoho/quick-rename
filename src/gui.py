@@ -22,8 +22,8 @@ def configReplace():
 def configOrder():
     if orderState.get():
         prefixRadio1.config(state='normal')
-        prefixRadio2.config(state= 'normal')
-        prefixRadio3.config(state= 'normal')
+        prefixRadio2.config(state='normal')
+        prefixRadio3.config(state='normal')
         upBtn['state'] = tk.NORMAL
         dwBtn['state'] = tk.NORMAL
     else:
@@ -72,20 +72,6 @@ def refreshListBox(listBox: tk.Listbox, names: list):
         listBox.insert(idx, name)
 
 
-def reviseFileList(namesDict):
-    keys = list(namesDict.keys())
-    keys.sort()
-
-    nameList = [namesDict[key] for key in keys]
-    refreshListBox(listBoxRead, nameList)
-
-
-def switchKey(namesDict: dict, keyOri, keyTgt):
-    tmp = namesDict[keyOri]
-    namesDict[keyOri] = namesDict[keyTgt]
-    namesDict[keyTgt] = tmp
-
-
 def readNames():
     tgtdirName = dirVariable.get()
     dirNames = os.listdir(tgtdirName)
@@ -103,19 +89,21 @@ def moveName(inc: int):
     namesDict = getNamesDict()
 
     if inc < 0:
-        idLast = 0
+        idBoundary = 0
     else:
-        idLast = len(namesDict) - 1
+        idBoundary = len(namesDict) - 1
 
-    idsSel = list(listBoxRead.curselection())
-    for id_ in idsSel:
-        if abs(id_ - idLast) > 0:
-            idNext = id_ + inc
-            switchKey(namesDict, id_, idNext)
-            moved = True
+    idSel = listBoxRead.curselection()[0]
+    if abs(idSel - idBoundary) > 0:
+        idNext = idSel + inc
+        namesDict[idSel], namesDict[idNext] = namesDict[idNext], namesDict[idSel]
+        moved = True
 
     if moved:
-        reviseFileList(namesDict)
+        keys = list(namesDict.keys())
+        keys.sort()
+        names = [namesDict[key] for key in keys]
+        refreshListBox(listBoxRead, names)
         listBoxRead.select_set(idNext)
 
 
