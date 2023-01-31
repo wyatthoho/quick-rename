@@ -189,7 +189,7 @@ if __name__ == '__main__':
     
     # frame up
     frameUp = tk.LabelFrame(root, text='Choose the directory')
-    frameUp.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1)
+    frameUp.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
     frameUp['font'] = labelFont
     
     frameUpUp = tk.Frame(frameUp)
@@ -296,14 +296,32 @@ if __name__ == '__main__':
     frameDwLeft = tk.Frame(frameDw)
     frameDwLeft.grid(row=0, column=0)
 
+    xscrollbarRead = tk.Scrollbar(frameDwLeft, orient=tk.HORIZONTAL)
+    yscrollbarRead = tk.Scrollbar(frameDwLeft, orient=tk.VERTICAL)
+    
+    xscrollbarRead.grid(row=1, column=0, sticky=tk.EW)
+    yscrollbarRead.grid(row=0, column=1, sticky=tk.NS)
+
+    listBoxRead = tk.Listbox(frameDwLeft, width=22, xscrollcommand=xscrollbarRead.set, yscrollcommand=yscrollbarRead.set)
+    listBoxRead.grid(row=0, column=0, padx=4, pady=4)
+    
+    xscrollbarRead.config(command=listBoxRead.xview)
+    yscrollbarRead.config(command=listBoxRead.yview)
+
+    xscrollbarPreview = tk.Scrollbar(frameDwLeft, orient=tk.HORIZONTAL)
+    yscrollbarPreview = tk.Scrollbar(frameDwLeft, orient=tk.VERTICAL)
+    
+    xscrollbarPreview.grid(row=1, column=2, sticky=tk.EW)
+    yscrollbarPreview.grid(row=0, column=3, sticky=tk.NS)
+
+    listBoxPreview = tk.Listbox(frameDwLeft, width=22, xscrollcommand=xscrollbarPreview.set, yscrollcommand=yscrollbarPreview.set)
+    listBoxPreview.grid(row=0, column=2, padx=4, pady=4)
+    
+    xscrollbarPreview.config(command=listBoxPreview.xview)
+    yscrollbarPreview.config(command=listBoxPreview.yview)
+
     frameDwRight = tk.Frame(frameDw)
     frameDwRight.grid(row=0, column=1)
-
-    listBoxRead = tk.Listbox(frameDwLeft, width=24)
-    listBoxRead.grid(row=0, column=0, padx=4, pady=4)
-
-    listBoxPreview = tk.Listbox(frameDwLeft, width=24)
-    listBoxPreview.grid(row=0, column=1, padx=4, pady=4)
 
     upBtn = tk.Button(frameDwRight, text='Up', command=lambda: moveName(-1), width=6)
     dwBtn = tk.Button(frameDwRight, text='Down', command=lambda: moveName(1), width=6)
