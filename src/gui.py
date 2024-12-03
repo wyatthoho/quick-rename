@@ -5,334 +5,334 @@ from tkinter import font
 from math import floor, log10
 
 
-def openDir():
-    dirName = filedialog.askdirectory(title='Choose the directory')
-    dirVariable.set(dirName)
+def open_dir():
+    dir_name = filedialog.askdirectory(title='Choose the directory')
+    dir_variable.set(dir_name)
 
 
-def configReplace():
-    if replaceState.get():
-        findEntry.config(state='normal')
-        replaceEntry.config(state='normal')
+def config_replace():
+    if replace_state.get():
+        find_entry.config(state='normal')
+        replace_entry.config(state='normal')
     else:
-        findEntry.config(state='disabled')
-        replaceEntry.config(state='disabled')
+        find_entry.config(state='disabled')
+        replace_entry.config(state='disabled')
 
 
-def configOrder():
-    if orderState.get():
-        prefixRadio1.config(state='normal')
-        prefixRadio2.config(state='normal')
-        prefixRadio3.config(state='normal')
-        upBtn['state'] = tk.NORMAL
-        dwBtn['state'] = tk.NORMAL
+def config_order():
+    if order_state.get():
+        prefix_radio1.config(state='normal')
+        prefix_radio2.config(state='normal')
+        prefix_radio3.config(state='normal')
+        up_btn['state'] = tk.NORMAL
+        dw_btn['state'] = tk.NORMAL
     else:
-        prefixRadio1.config(state='disabled')
-        prefixRadio2.config(state='disabled')
-        prefixRadio3.config(state='disabled')
-        upBtn['state'] = tk.DISABLED
-        dwBtn['state'] = tk.DISABLED
+        prefix_radio1.config(state='disabled')
+        prefix_radio2.config(state='disabled')
+        prefix_radio3.config(state='disabled')
+        up_btn['state'] = tk.DISABLED
+        dw_btn['state'] = tk.DISABLED
 
 
-def configSuffix():
-    if suffixState.get():
-        suffixEntry.config(state='normal')
+def config_suffix():
+    if suffix_state.get():
+        suffix_entry.config(state='normal')
     else:
-        suffixEntry.config(state='disabled')
+        suffix_entry.config(state='disabled')
 
 
-def cleanPrefix(names: list):
-    newNames = []
+def clean_prefix(names: list):
+    new_names = []
     for name in names:
-        nameSeparated = name.partition('_')
-        if nameSeparated[0].isdigit():
-            name = nameSeparated[-1]
+        name_separated = name.partition('_')
+        if name_separated[0].isdigit():
+            name = name_separated[-1]
     
-        nameSeparated = name.partition('-')
-        if nameSeparated[0].isdigit():
-            name = nameSeparated[-1]
+        name_separated = name.partition('-')
+        if name_separated[0].isdigit():
+            name = name_separated[-1]
     
-        nameSeparated = name.partition(' ')
-        if nameSeparated[0].isdigit():
-            name = nameSeparated[-1]
+        name_separated = name.partition(' ')
+        if name_separated[0].isdigit():
+            name = name_separated[-1]
     
-        newNames.append(name)
-    return newNames
+        new_names.append(name)
+    return new_names
 
 
-def refreshListBox(listBox: tk.Listbox, names: list):
-    listBox.delete(0, tk.END)
+def refresh_list_box(list_box: tk.Listbox, names: list):
+    list_box.delete(0, tk.END)
     for idx, name in enumerate(names):
-        listBox.insert(idx, name)
+        list_box.insert(idx, name)
 
 
-def readNames():
-    tgtdirName = dirVariable.get()
-    dirNames = os.listdir(tgtdirName)
+def read_names():
+    tgt_dir_name = dir_variable.get()
+    dir_names = os.listdir(tgt_dir_name)
 
-    if applyValue.get() == 1:
-        names = [dirName for dirName in dirNames if os.path.isfile(os.path.join(tgtdirName, dirName))]
+    if apply_value.get() == 1:
+        names = [dir_name for dir_name in dir_names if os.path.isfile(os.path.join(tgt_dir_name, dir_name))]
     else:
-        names = [dirName for dirName in dirNames if not os.path.isfile(os.path.join(tgtdirName, dirName))]
+        names = [dir_dame for dir_dame in dir_names if not os.path.isfile(os.path.join(tgt_dir_name, dir_dame))]
 
-    refreshListBox(listBoxRead, names)
+    refresh_list_box(list_box_read, names)
 
 
-def moveName(inc: int):
+def move_name(inc: int):
     moved = False
-    names = list(listBoxRead.get(0, tk.END))
-    namesDict = {idx:name for idx, name in enumerate(names)}
+    names = list(list_box_read.get(0, tk.END))
+    names_dict = {idx:name for idx, name in enumerate(names)}
 
     if inc < 0:
-        idBoundary = 0
+        id_boundary = 0
     else:
-        idBoundary = len(namesDict) - 1
+        id_boundary = len(names_dict) - 1
 
-    idSel = listBoxRead.curselection()[0]
-    if abs(idSel - idBoundary) > 0:
-        idNext = idSel + inc
-        namesDict[idSel], namesDict[idNext] = namesDict[idNext], namesDict[idSel]
+    id_sel = list_box_read.curselection()[0]
+    if abs(id_sel - id_boundary) > 0:
+        id_next = id_sel + inc
+        names_dict[id_sel], names_dict[id_next] = names_dict[id_next], names_dict[id_sel]
         moved = True
 
     if moved:
-        keys = list(namesDict.keys())
+        keys = list(names_dict.keys())
         keys.sort()
-        names = [namesDict[key] for key in keys]
-        refreshListBox(listBoxRead, names)
-        listBoxRead.select_set(idNext)
+        names = [names_dict[key] for key in keys]
+        refresh_list_box(list_box_read, names)
+        list_box_read.select_set(id_next)
 
 
-def replaceNames(names: list):
-    findStr = findEntry.get()
-    replaceStr = replaceEntry.get()
-    return [name.replace(findStr, replaceStr) for name in names]
+def replace_names(names: list):
+    find_str = find_entry.get()
+    replace_str = replace_entry.get()
+    return [name.replace(find_str, replace_str) for name in names]
 
 
-def addSuffix(names: list):
-    suffix = suffixEntry.get()
-    return [ ''.join([_str + suffix if idx==0 else _str for idx, _str in enumerate(name.rpartition('.'))]) for name in names]
+def add_suffix(names: list):
+    suffix = suffix_entry.get()
+    return [''.join([_str + suffix if idx==0 else _str for idx, _str in enumerate(name.rpartition('.'))]) for name in names]
 
 
-def reorderNames(names: list):
-    names = cleanPrefix(names)
-    if radioValue.get() == 1:
+def reorder_names(names: list):
+    names = clean_prefix(names)
+    if radio_value.get() == 1:
         sep = '_'
-    elif radioValue.get() == 2:
+    elif radio_value.get() == 2:
         sep = '-'
-    elif radioValue.get() == 3:
+    elif radio_value.get() == 3:
         sep = ' '
 
-    numName = len(names)
-    decimal = floor(log10(numName)) + 1
+    num_name = len(names)
+    decimal = floor(log10(num_name)) + 1
     return ['{idx:{fill}{width}}{sep}{name}'.format(idx=idx, fill='0', width=decimal, sep=sep, name=name) for idx, name in enumerate(names)]
 
 
-def checkRepeated(listBox: tk.Listbox, names: list):
-    global nameRepeated
-    nameRepeated = False
+def check_repeated(list_box: tk.Listbox, names: list):
+    global name_repeated
+    name_repeated = False
 
     for idx1, name1 in enumerate(names):
         for idx2, name2 in enumerate(names[idx1+1:]):
             if name2 == name1:
-                nameRepeated = True
-                listBox.itemconfig(idx1, {'bg':'red'})
-                listBox.itemconfig(idx1+idx2+1, {'bg':'red'})
+                name_repeated = True
+                list_box.itemconfig(idx1, {'bg':'red'})
+                list_box.itemconfig(idx1+idx2+1, {'bg':'red'})
 
 
-def previewNames():
-    names = list(listBoxRead.get(0, tk.END))
-    if replaceState.get():
-        names = replaceNames(names)
-    if suffixState.get():
-        names = addSuffix(names)
-    if orderState.get():
-        names = reorderNames(names)
+def preview_names():
+    names = list(list_box_read.get(0, tk.END))
+    if replace_state.get():
+        names = replace_names(names)
+    if suffix_state.get():
+        names = add_suffix(names)
+    if order_state.get():
+        names = reorder_names(names)
 
-    refreshListBox(listBoxPreview, names)
-    checkRepeated(listBoxPreview, names)
+    refresh_list_box(list_box_preview, names)
+    check_repeated(list_box_preview, names)
 
 
 def rename():
-    tgtdirName = dirVariable.get()
-    namesSrc = list(listBoxRead.get(0, tk.END))
-    namesDst = list(listBoxPreview.get(0, tk.END))
+    tgt_dir_name = dir_variable.get()
+    names_src = list(list_box_read.get(0, tk.END))
+    names_dst = list(list_box_preview.get(0, tk.END))
 
     try:
-        if nameRepeated:
+        if name_repeated:
             raise Exception('There are repeated names after renaming.')
         else:
-            for nameSrc, nameDst in zip(namesSrc, namesDst):
-                pathSrc = os.path.join(tgtdirName, nameSrc)
-                pathDst = os.path.join(tgtdirName, nameDst)
-                os.rename(src=pathSrc, dst=pathDst)
+            for name_src, name_dst in zip(names_src, names_dst):
+                path_src = os.path.join(tgt_dir_name, name_src)
+                path_dst = os.path.join(tgt_dir_name, name_dst)
+                os.rename(src=path_src, dst=path_dst)
     except Exception as e:
         tk.messagebox.showerror("Error", e.args[0])
-        listBoxPreview.delete(0, tk.END)
+        list_box_preview.delete(0, tk.END)
     else:
         tk.messagebox.showinfo("Message", "Renamed successfully.")
-        listBoxRead.delete(0, tk.END)
-        listBoxPreview.delete(0, tk.END)
+        list_box_read.delete(0, tk.END)
+        list_box_preview.delete(0, tk.END)
 
 
 if __name__ == '__main__':
-    fileDir = os.path.dirname(__file__)
-    pardir = os.path.abspath(os.path.join(fileDir, os.path.pardir))
-    logoPath = os.path.join(pardir, 'image', 'w.ico')
+    file_dir = os.path.dirname(__file__)
+    par_dir = os.path.abspath(os.path.join(file_dir, os.path.pardir))
+    logo_path = os.path.join(par_dir, 'image', 'w.ico')
 
     root = tk.Tk()
     root.title('QuickRename')
     root.resizable(width=0, height=0)
-    root.iconbitmap(logoPath)
+    root.iconbitmap(logo_path)
 
-    labelFont = font.Font(family='Helvetica', size=10)
-    btnFont = font.Font(family='Helvetica', size=10)
+    label_font = font.Font(family='Helvetica', size=10)
+    btn_font = font.Font(family='Helvetica', size=10)
     
     # frame up
-    frameUp = tk.LabelFrame(root, text='Choose the directory')
-    frameUp.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
-    frameUp['font'] = labelFont
+    frame_up = tk.LabelFrame(root, text='Choose the directory')
+    frame_up.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
+    frame_up['font'] = label_font
     
-    frameUpUp = tk.Frame(frameUp)
-    frameUpUp.grid(row=0, column=0)
+    frame_up_up = tk.Frame(frame_up)
+    frame_up_up.grid(row=0, column=0)
 
-    frameUpDw = tk.Frame(frameUp)
-    frameUpDw.grid(row=1, column=0, sticky=tk.W)
+    frame_up_dw = tk.Frame(frame_up)
+    frame_up_dw.grid(row=1, column=0, sticky=tk.W)
 
-    frameUpRight = tk.Frame(frameUp)
-    frameUpRight.grid(row=0, column=1, rowspan=2)
+    frame_up_right = tk.Frame(frame_up)
+    frame_up_right.grid(row=0, column=1, rowspan=2)
 
-    dirVariable = tk.StringVar()
-    tgtDirStrEntry = tk.Entry(frameUpUp, width=50, textvariable=dirVariable)
-    tgtDirStrEntry.grid(row=0, column=0, padx=4, pady=4)
+    dir_variable = tk.StringVar()
+    tgt_dir_str_entry = tk.Entry(frame_up_up, width=50, textvariable=dir_variable)
+    tgt_dir_str_entry.grid(row=0, column=0, padx=4, pady=4)
 
-    applyLabel = tk.Label(frameUpDw, text='Apply to:')
-    applyLabel.grid(row=0, column=0, padx=4)
+    apply_label = tk.Label(frame_up_dw, text='Apply to:')
+    apply_label.grid(row=0, column=0, padx=4)
 
-    applyValue = tk.IntVar() 
-    fileRadio = tk.Radiobutton(frameUpDw, text='Files', variable=applyValue, value=1)
-    fileRadio.grid(row=0, column=1)
+    apply_value = tk.IntVar() 
+    file_radio = tk.Radiobutton(frame_up_dw, text='Files', variable=apply_value, value=1)
+    file_radio.grid(row=0, column=1)
     
-    folderRadio = tk.Radiobutton(frameUpDw, text='Folders', variable=applyValue, value=2)
-    folderRadio.grid(row=0, column=2)
-    applyValue.set(1)
+    folder_radio = tk.Radiobutton(frame_up_dw, text='Folders', variable=apply_value, value=2)
+    folder_radio.grid(row=0, column=2)
+    apply_value.set(1)
 
-    chooseBtn = tk.Button(frameUpRight, text='Choose', command=openDir, width=6)
-    chooseBtn.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1)
-    chooseBtn['font'] = btnFont
+    choose_btn = tk.Button(frame_up_right, text='Choose', command=open_dir, width=6)
+    choose_btn.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1)
+    choose_btn['font'] = btn_font
 
-    readBtn = tk.Button(frameUpRight, text='Read', command=readNames, width=6)
-    readBtn.grid(row=1, column=0, padx=4, pady=4, ipadx=1, ipady=1)
-    readBtn['font'] = btnFont
+    read_btn = tk.Button(frame_up_right, text='Read', command=read_names, width=6)
+    read_btn.grid(row=1, column=0, padx=4, pady=4, ipadx=1, ipady=1)
+    read_btn['font'] = btn_font
 
     # frame mid
-    frameMid = tk.LabelFrame(root, text='Naming method')
-    frameMid.grid(row=1, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
-    frameMid['font'] = labelFont
+    frame_mid = tk.LabelFrame(root, text='Naming method')
+    frame_mid.grid(row=1, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
+    frame_mid['font'] = label_font
 
-    frameMidUp = tk.Frame(frameMid)
-    frameMidUp.grid(row=0, column=0, sticky=tk.W)
+    frame_mid_up = tk.Frame(frame_mid)
+    frame_mid_up.grid(row=0, column=0, sticky=tk.W)
 
-    frameMidMid = tk.Frame(frameMid)
-    frameMidMid.grid(row=1, column=0, sticky=tk.W)
+    frame_mid_mid = tk.Frame(frame_mid)
+    frame_mid_mid.grid(row=1, column=0, sticky=tk.W)
 
-    frameMidDw = tk.Frame(frameMid)
-    frameMidDw.grid(row=2, column=0, sticky=tk.W)
+    frame_mid_dw = tk.Frame(frame_mid)
+    frame_mid_dw.grid(row=2, column=0, sticky=tk.W)
     
-    replaceState = tk.IntVar()
-    replaceCheckBtn = tk.Checkbutton(frameMidUp, text='Replace text', command=configReplace, variable=replaceState, onvalue=1, offvalue=0)
-    replaceCheckBtn.grid(row=0, column=0, padx=4, pady=4)
+    replace_state = tk.IntVar()
+    replace_check_btn = tk.Checkbutton(frame_mid_up, text='Replace text', command=config_replace, variable=replace_state, onvalue=1, offvalue=0)
+    replace_check_btn.grid(row=0, column=0, padx=4, pady=4)
 
-    findLabel = tk.Label(frameMidUp, text='Find:')
-    findLabel.grid(row=0, column=1, padx=4, pady=4)
+    find_label = tk.Label(frame_mid_up, text='Find:')
+    find_label.grid(row=0, column=1, padx=4, pady=4)
     
-    findEntry = tk.Entry(frameMidUp, width=13)
-    findEntry.grid(row=0, column=2, padx=4, pady=4)
-    findEntry.config(state='disabled')
+    find_entry = tk.Entry(frame_mid_up, width=13)
+    find_entry.grid(row=0, column=2, padx=4, pady=4)
+    find_entry.config(state='disabled')
     
-    replaceLabel = tk.Label(frameMidUp, text='Replace:')
-    replaceLabel.grid(row=0, column=3, padx=4, pady=4)
+    replace_label = tk.Label(frame_mid_up, text='Replace:')
+    replace_label.grid(row=0, column=3, padx=4, pady=4)
     
-    replaceEntry = tk.Entry(frameMidUp, width=13)
-    replaceEntry.grid(row=0, column=4, padx=4, pady=4)
-    replaceEntry.config(state='disabled')
+    replace_entry = tk.Entry(frame_mid_up, width=13)
+    replace_entry.grid(row=0, column=4, padx=4, pady=4)
+    replace_entry.config(state='disabled')
 
-    suffixState = tk.IntVar()
-    suffixCheckBtn = tk.Checkbutton(frameMidMid, text='Add suffix', command=configSuffix, variable=suffixState, onvalue=1, offvalue=0)
-    suffixCheckBtn.grid(row=0, column=0, padx=4, pady=4)
+    suffix_state = tk.IntVar()
+    suffix_sheck_btn = tk.Checkbutton(frame_mid_mid, text='Add suffix', command=config_suffix, variable=suffix_state, onvalue=1, offvalue=0)
+    suffix_sheck_btn.grid(row=0, column=0, padx=4, pady=4)
 
-    suffixLabel = tk.Label(frameMidMid, text='Suffix:')
-    suffixLabel.grid(row=0, column=1, padx=4, pady=4)
+    suffix_label = tk.Label(frame_mid_mid, text='Suffix:')
+    suffix_label.grid(row=0, column=1, padx=4, pady=4)
     
-    suffixEntry = tk.Entry(frameMidMid, width=13)
-    suffixEntry.grid(row=0, column=2, padx=4, pady=4)
-    suffixEntry.config(state='disabled')
+    suffix_entry = tk.Entry(frame_mid_mid, width=13)
+    suffix_entry.grid(row=0, column=2, padx=4, pady=4)
+    suffix_entry.config(state='disabled')
 
-    orderState = tk.IntVar()
-    orderCheckBtn = tk.Checkbutton(frameMidDw, text='Make an order', command=configOrder, variable=orderState, onvalue=1, offvalue=0)
-    orderCheckBtn.grid(row=1, column=0, padx=4, pady=4)
+    order_state = tk.IntVar()
+    order_check_btn = tk.Checkbutton(frame_mid_dw, text='Make an order', command=config_order, variable=order_state, onvalue=1, offvalue=0)
+    order_check_btn.grid(row=1, column=0, padx=4, pady=4)
 
-    sepLabel = tk.Label(frameMidDw, text='Sep:')
-    sepLabel.grid(row=1, column=1, padx=4, pady=4)
+    sep_label = tk.Label(frame_mid_dw, text='Sep:')
+    sep_label.grid(row=1, column=1, padx=4, pady=4)
 
-    radioValue = tk.IntVar() 
-    prefixRadio1 = tk.Radiobutton(frameMidDw, text='_', variable=radioValue, value=1)
-    prefixRadio1.grid(row=1, column=2, padx=4, pady=4)
-    prefixRadio1.config(state='disabled')
+    radio_value = tk.IntVar() 
+    prefix_radio1 = tk.Radiobutton(frame_mid_dw, text='_', variable=radio_value, value=1)
+    prefix_radio1.grid(row=1, column=2, padx=4, pady=4)
+    prefix_radio1.config(state='disabled')
     
-    prefixRadio2 = tk.Radiobutton(frameMidDw, text='-', variable=radioValue, value=2)
-    prefixRadio2.grid(row=1, column=3, padx=4, pady=4)
-    prefixRadio2.config(state='disabled')
+    prefix_radio2 = tk.Radiobutton(frame_mid_dw, text='-', variable=radio_value, value=2)
+    prefix_radio2.grid(row=1, column=3, padx=4, pady=4)
+    prefix_radio2.config(state='disabled')
     
-    prefixRadio3 = tk.Radiobutton(frameMidDw, text='space', variable=radioValue, value=3)
-    prefixRadio3.grid(row=1, column=4, padx=4, pady=4)
-    prefixRadio3.config(state='disabled')
-    radioValue.set(1)
+    prefix_radio3 = tk.Radiobutton(frame_mid_dw, text='space', variable=radio_value, value=3)
+    prefix_radio3.grid(row=1, column=4, padx=4, pady=4)
+    prefix_radio3.config(state='disabled')
+    radio_value.set(1)
 
     # frame down
-    frameDw = tk.LabelFrame(root, text='Name list')
-    frameDw.grid(row=2, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
-    frameDw['font'] = labelFont
+    frame_dw = tk.LabelFrame(root, text='Name list')
+    frame_dw.grid(row=2, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
+    frame_dw['font'] = label_font
     
-    frameDwLeft = tk.Frame(frameDw)
-    frameDwLeft.grid(row=0, column=0)
+    frame_dw_left = tk.Frame(frame_dw)
+    frame_dw_left.grid(row=0, column=0)
 
-    xscrollbarRead = tk.Scrollbar(frameDwLeft, orient=tk.HORIZONTAL)
-    yscrollbarRead = tk.Scrollbar(frameDwLeft, orient=tk.VERTICAL)
+    scrollbar_read_x = tk.Scrollbar(frame_dw_left, orient=tk.HORIZONTAL)
+    scrollbar_read_y = tk.Scrollbar(frame_dw_left, orient=tk.VERTICAL)
     
-    xscrollbarRead.grid(row=1, column=0, sticky=tk.EW)
-    yscrollbarRead.grid(row=0, column=1, sticky=tk.NS)
+    scrollbar_read_x.grid(row=1, column=0, sticky=tk.EW)
+    scrollbar_read_y.grid(row=0, column=1, sticky=tk.NS)
 
-    listBoxRead = tk.Listbox(frameDwLeft, width=22, xscrollcommand=xscrollbarRead.set, yscrollcommand=yscrollbarRead.set)
-    listBoxRead.grid(row=0, column=0, padx=4, pady=4)
+    list_box_read = tk.Listbox(frame_dw_left, width=22, xscrollcommand=scrollbar_read_x.set, yscrollcommand=scrollbar_read_y.set)
+    list_box_read.grid(row=0, column=0, padx=4, pady=4)
     
-    xscrollbarRead.config(command=listBoxRead.xview)
-    yscrollbarRead.config(command=listBoxRead.yview)
+    scrollbar_read_x.config(command=list_box_read.xview)
+    scrollbar_read_y.config(command=list_box_read.yview)
 
-    xscrollbarPreview = tk.Scrollbar(frameDwLeft, orient=tk.HORIZONTAL)
-    yscrollbarPreview = tk.Scrollbar(frameDwLeft, orient=tk.VERTICAL)
+    scrollbar_preview_x = tk.Scrollbar(frame_dw_left, orient=tk.HORIZONTAL)
+    scrollbar_preview_y = tk.Scrollbar(frame_dw_left, orient=tk.VERTICAL)
     
-    xscrollbarPreview.grid(row=1, column=2, sticky=tk.EW)
-    yscrollbarPreview.grid(row=0, column=3, sticky=tk.NS)
+    scrollbar_preview_x.grid(row=1, column=2, sticky=tk.EW)
+    scrollbar_preview_y.grid(row=0, column=3, sticky=tk.NS)
 
-    listBoxPreview = tk.Listbox(frameDwLeft, width=22, xscrollcommand=xscrollbarPreview.set, yscrollcommand=yscrollbarPreview.set)
-    listBoxPreview.grid(row=0, column=2, padx=4, pady=4)
+    list_box_preview = tk.Listbox(frame_dw_left, width=22, xscrollcommand=scrollbar_preview_x.set, yscrollcommand=scrollbar_preview_y.set)
+    list_box_preview.grid(row=0, column=2, padx=4, pady=4)
     
-    xscrollbarPreview.config(command=listBoxPreview.xview)
-    yscrollbarPreview.config(command=listBoxPreview.yview)
+    scrollbar_preview_x.config(command=list_box_preview.xview)
+    scrollbar_preview_y.config(command=list_box_preview.yview)
 
-    frameDwRight = tk.Frame(frameDw)
-    frameDwRight.grid(row=0, column=1)
+    frame_dw_right = tk.Frame(frame_dw)
+    frame_dw_right.grid(row=0, column=1)
 
-    upBtn = tk.Button(frameDwRight, text='Up', command=lambda: moveName(-1), width=6)
-    dwBtn = tk.Button(frameDwRight, text='Down', command=lambda: moveName(1), width=6)
-    preBtn = tk.Button(frameDwRight, text='Preview', command=previewNames, width=6)
-    runBtn = tk.Button(frameDwRight, text='Run',command=rename, width=6)
-    upBtn['state'] = tk.DISABLED
-    dwBtn['state'] = tk.DISABLED
+    up_btn = tk.Button(frame_dw_right, text='Up', command=lambda: move_name(-1), width=6)
+    dw_btn = tk.Button(frame_dw_right, text='Down', command=lambda: move_name(1), width=6)
+    pre_btn = tk.Button(frame_dw_right, text='Preview', command=preview_names, width=6)
+    run_btn = tk.Button(frame_dw_right, text='Run',command=rename, width=6)
+    up_btn['state'] = tk.DISABLED
+    dw_btn['state'] = tk.DISABLED
 
-    for idx, widget in enumerate(frameDwRight.winfo_children()):
+    for idx, widget in enumerate(frame_dw_right.winfo_children()):
         widget.grid(row=idx, column=0, padx=4, pady=4, ipadx=1, ipady=1)
-        widget['font'] = btnFont
+        widget['font'] = btn_font
 
     root.mainloop()
     
