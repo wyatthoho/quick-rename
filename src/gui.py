@@ -19,6 +19,13 @@ def config_replace(replace_state: tk.IntVar, find_entry: tk.Entry, replace_entry
         replace_entry.config(state='disabled')
 
 
+def config_suffix(suffix_state: tk.IntVar, suffix_entry: tk.Entry):
+    if suffix_state.get():
+        suffix_entry.config(state='normal')
+    else:
+        suffix_entry.config(state='disabled')
+
+
 def config_order(order_state: tk.IntVar, prefix_radio1: tk.Radiobutton, prefix_radio2: tk.Radiobutton, prefix_radio3: tk.Radiobutton, up_btn: tk.Button, dw_btn: tk.Button):
     if order_state.get():
         prefix_radio1.config(state='normal')
@@ -32,32 +39,6 @@ def config_order(order_state: tk.IntVar, prefix_radio1: tk.Radiobutton, prefix_r
         prefix_radio3.config(state='disabled')
         up_btn['state'] = tk.DISABLED
         dw_btn['state'] = tk.DISABLED
-
-
-def config_suffix(suffix_state: tk.IntVar, suffix_entry: tk.Entry):
-    if suffix_state.get():
-        suffix_entry.config(state='normal')
-    else:
-        suffix_entry.config(state='disabled')
-
-
-def clean_prefix(names: list):
-    new_names = []
-    for name in names:
-        name_separated = name.partition('_')
-        if name_separated[0].isdigit():
-            name = name_separated[-1]
-
-        name_separated = name.partition('-')
-        if name_separated[0].isdigit():
-            name = name_separated[-1]
-
-        name_separated = name.partition(' ')
-        if name_separated[0].isdigit():
-            name = name_separated[-1]
-
-        new_names.append(name)
-    return new_names
 
 
 def refresh_list_box(list_box: tk.Listbox, names: list):
@@ -113,6 +94,25 @@ def add_suffix(names: list, suffix_entry: tk.Entry):
     return [''.join([_str + suffix if idx == 0 else _str for idx, _str in enumerate(name.rpartition('.'))]) for name in names]
 
 
+def clean_prefix(names: list):
+    new_names = []
+    for name in names:
+        name_separated = name.partition('_')
+        if name_separated[0].isdigit():
+            name = name_separated[-1]
+
+        name_separated = name.partition('-')
+        if name_separated[0].isdigit():
+            name = name_separated[-1]
+
+        name_separated = name.partition(' ')
+        if name_separated[0].isdigit():
+            name = name_separated[-1]
+
+        new_names.append(name)
+    return new_names
+
+
 def reorder_names(names: list, radio_value: tk.IntVar):
     names = clean_prefix(names)
     if radio_value.get() == 1:
@@ -152,7 +152,7 @@ def preview_names(list_box_read: tk.Listbox, list_box_preview: tk.Listbox, repla
     check_repeated(list_box_preview, names)
 
 
-def rename(dir_variable: tk.StringVar, list_box_read: tk.Listbox, list_box_preview: tk.Listbox):
+def run_rename(dir_variable: tk.StringVar, list_box_read: tk.Listbox, list_box_preview: tk.Listbox):
     tgt_dir_name = dir_variable.get()
     names_src = list(list_box_read.get(0, tk.END))
     names_dst = list(list_box_preview.get(0, tk.END))
@@ -326,7 +326,7 @@ def main():
     up_btn = tk.Button(frame_dw_right, text='Up', command=lambda: move_name(-1, list_box_read), width=6)
     dw_btn = tk.Button(frame_dw_right, text='Down', command=lambda: move_name(1, list_box_read), width=6)
     pre_btn = tk.Button(frame_dw_right, text='Preview', command=lambda: preview_names(list_box_read, list_box_preview, replace_state, suffix_state, order_state, find_entry, replace_entry, suffix_entry, radio_value), width=6)
-    run_btn = tk.Button(frame_dw_right, text='Run', command=lambda: rename(dir_variable, list_box_read, list_box_preview), width=6)
+    run_btn = tk.Button(frame_dw_right, text='Run', command=lambda: run_rename(dir_variable, list_box_read, list_box_preview), width=6)
     up_btn['state'] = tk.DISABLED
     dw_btn['state'] = tk.DISABLED
 
