@@ -181,10 +181,10 @@ class App:
     def __init__(self):
         self.root = self.initialize_main_window()
         self.font_label = font.Font(family='Helvetica', size=10)
-        self.font_btn = font.Font(family='Helvetica', size=10)
-        self.create_frame_up()
-        self.create_frame_mid()
-        self.create_frame_dw()
+        self.font_button = font.Font(family='Helvetica', size=10)
+        self.create_frame_target_directory()
+        self.create_frame_naming_method()
+        self.create_frame_name_list()
         self.root.mainloop()
 
     def initialize_main_window(self):
@@ -195,152 +195,152 @@ class App:
         root.resizable(width=0, height=0)
         return root
     
-    def create_frame_up(self):
-        frame_up = tk.LabelFrame(self.root, text='Choose the directory')
-        frame_up.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
-        frame_up['font'] = self.font_label
+    def create_frame_target_directory(self):
+        frame = tk.LabelFrame(self.root, text='Choose the directory')
+        frame.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
+        frame['font'] = self.font_label
 
-        frame_up_up = tk.Frame(frame_up)
-        frame_up_up.grid(row=0, column=0)
+        frame_up = tk.Frame(frame)
+        frame_up.grid(row=0, column=0)
 
-        frame_up_dw = tk.Frame(frame_up)
-        frame_up_dw.grid(row=1, column=0, sticky=tk.W)
+        frame_dw = tk.Frame(frame)
+        frame_dw.grid(row=1, column=0, sticky=tk.W)
 
-        frame_up_right = tk.Frame(frame_up)
-        frame_up_right.grid(row=0, column=1, rowspan=2)
+        frame_right = tk.Frame(frame)
+        frame_right.grid(row=0, column=1, rowspan=2)
 
-        self.dir_variable = tk.StringVar()
-        tgt_dir_str_entry = tk.Entry(frame_up_up, width=50, textvariable=self.dir_variable)
-        tgt_dir_str_entry.grid(row=0, column=0, padx=4, pady=4)
+        self.strvar_tgtdir = tk.StringVar()
+        entry_tgtdir = tk.Entry(frame_up, width=50, textvariable=self.strvar_tgtdir)
+        entry_tgtdir.grid(row=0, column=0, padx=4, pady=4)
 
-        apply_label = tk.Label(frame_up_dw, text='Apply to:')
-        apply_label.grid(row=0, column=0, padx=4)
+        label_apply = tk.Label(frame_dw, text='Apply to:')
+        label_apply.grid(row=0, column=0, padx=4)
 
-        self.apply_value = tk.IntVar()
-        file_radio = tk.Radiobutton(frame_up_dw, text='Files', variable=self.apply_value, value=1)
-        file_radio.grid(row=0, column=1)
+        self.intvar_applyto = tk.IntVar()
+        radio_file = tk.Radiobutton(frame_dw, text='Files', variable=self.intvar_applyto, value=1)
+        radio_file.grid(row=0, column=1)
 
-        folder_radio = tk.Radiobutton(frame_up_dw, text='Folders', variable=self.apply_value, value=2)
-        folder_radio.grid(row=0, column=2)
-        self.apply_value.set(1)
+        radio_folder = tk.Radiobutton(frame_dw, text='Folders', variable=self.intvar_applyto, value=2)
+        radio_folder.grid(row=0, column=2)
+        self.intvar_applyto.set(1)
 
-        choose_btn = tk.Button(frame_up_right, text='Choose', command=lambda: open_dir(self.dir_variable), width=6)
-        choose_btn.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1)
-        choose_btn['font'] = self.font_btn
+        button_choose = tk.Button(frame_right, text='Choose', command=lambda: open_dir(self.strvar_tgtdir), width=6)
+        button_choose.grid(row=0, column=0, padx=4, pady=4, ipadx=1, ipady=1)
+        button_choose['font'] = self.font_button
 
-        read_btn = tk.Button(frame_up_right, text='Read', command=lambda: read_names(self.dir_variable, self.apply_value, self.list_box_read), width=6)
-        read_btn.grid(row=1, column=0, padx=4, pady=4, ipadx=1, ipady=1)
-        read_btn['font'] = self.font_btn
+        button_read = tk.Button(frame_right, text='Read', command=lambda: read_names(self.strvar_tgtdir, self.intvar_applyto, self.listbox_read), width=6)
+        button_read.grid(row=1, column=0, padx=4, pady=4, ipadx=1, ipady=1)
+        button_read['font'] = self.font_button
 
-    def create_frame_mid(self):
-        frame_mid = tk.LabelFrame(self.root, text='Naming method')
-        frame_mid.grid(row=1, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
-        frame_mid['font'] = self.font_label
+    def create_frame_naming_method(self):
+        frame = tk.LabelFrame(self.root, text='Naming method')
+        frame.grid(row=1, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
+        frame['font'] = self.font_label
 
-        frame_mid_up = tk.Frame(frame_mid)
-        frame_mid_up.grid(row=0, column=0, sticky=tk.W)
+        frame_up = tk.Frame(frame)
+        frame_up.grid(row=0, column=0, sticky=tk.W)
 
-        frame_mid_mid = tk.Frame(frame_mid)
-        frame_mid_mid.grid(row=1, column=0, sticky=tk.W)
+        frame_mid = tk.Frame(frame)
+        frame_mid.grid(row=1, column=0, sticky=tk.W)
 
-        frame_mid_dw = tk.Frame(frame_mid)
-        frame_mid_dw.grid(row=2, column=0, sticky=tk.W)
+        frame_dw = tk.Frame(frame)
+        frame_dw.grid(row=2, column=0, sticky=tk.W)
 
-        self.replace_state = tk.IntVar()
-        replace_check_btn = tk.Checkbutton(frame_mid_up, text='Replace text', command=lambda: config_replace(self.replace_state, self.find_entry, self.replace_entry), variable=self.replace_state, onvalue=1, offvalue=0)
-        replace_check_btn.grid(row=0, column=0, padx=4, pady=4)
+        self.intvar_replace = tk.IntVar()
+        checkbutton_replace = tk.Checkbutton(frame_up, text='Replace text', command=lambda: config_replace(self.intvar_replace, self.entry_find, self.entry_replace), variable=self.intvar_replace, onvalue=1, offvalue=0)
+        checkbutton_replace.grid(row=0, column=0, padx=4, pady=4)
 
-        find_label = tk.Label(frame_mid_up, text='Find:')
-        find_label.grid(row=0, column=1, padx=4, pady=4)
+        label_find = tk.Label(frame_up, text='Find:')
+        label_find.grid(row=0, column=1, padx=4, pady=4)
 
-        self.find_entry = tk.Entry(frame_mid_up, width=13)
-        self.find_entry.grid(row=0, column=2, padx=4, pady=4)
-        self.find_entry.config(state='disabled')
+        self.entry_find = tk.Entry(frame_up, width=13)
+        self.entry_find.grid(row=0, column=2, padx=4, pady=4)
+        self.entry_find.config(state='disabled')
 
-        replace_label = tk.Label(frame_mid_up, text='Replace:')
-        replace_label.grid(row=0, column=3, padx=4, pady=4)
+        label_replace = tk.Label(frame_up, text='Replace:')
+        label_replace.grid(row=0, column=3, padx=4, pady=4)
 
-        self.replace_entry = tk.Entry(frame_mid_up, width=13)
-        self.replace_entry.grid(row=0, column=4, padx=4, pady=4)
-        self.replace_entry.config(state='disabled')
+        self.entry_replace = tk.Entry(frame_up, width=13)
+        self.entry_replace.grid(row=0, column=4, padx=4, pady=4)
+        self.entry_replace.config(state='disabled')
 
-        self.suffix_state = tk.IntVar()
-        suffix_sheck_btn = tk.Checkbutton(frame_mid_mid, text='Add suffix', command=lambda: config_suffix(self.suffix_state, self.suffix_entry), variable=self.suffix_state, onvalue=1, offvalue=0)
-        suffix_sheck_btn.grid(row=0, column=0, padx=4, pady=4)
+        self.intvar_suffix = tk.IntVar()
+        checkbutton_suffix = tk.Checkbutton(frame_mid, text='Add suffix', command=lambda: config_suffix(self.intvar_suffix, self.entry_suffix), variable=self.intvar_suffix, onvalue=1, offvalue=0)
+        checkbutton_suffix.grid(row=0, column=0, padx=4, pady=4)
 
-        suffix_label = tk.Label(frame_mid_mid, text='Suffix:')
-        suffix_label.grid(row=0, column=1, padx=4, pady=4)
+        label_suffix = tk.Label(frame_mid, text='Suffix:')
+        label_suffix.grid(row=0, column=1, padx=4, pady=4)
 
-        self.suffix_entry = tk.Entry(frame_mid_mid, width=13)
-        self.suffix_entry.grid(row=0, column=2, padx=4, pady=4)
-        self.suffix_entry.config(state='disabled')
+        self.entry_suffix = tk.Entry(frame_mid, width=13)
+        self.entry_suffix.grid(row=0, column=2, padx=4, pady=4)
+        self.entry_suffix.config(state='disabled')
 
-        self.order_state = tk.IntVar()
-        order_check_btn = tk.Checkbutton(frame_mid_dw, text='Make an order', command=lambda: config_order(self.order_state, prefix_radio1, prefix_radio2, prefix_radio3, self.up_btn, self.dw_btn), variable=self.order_state, onvalue=1, offvalue=0)
-        order_check_btn.grid(row=1, column=0, padx=4, pady=4)
+        self.intvar_order = tk.IntVar()
+        checkbutton_order = tk.Checkbutton(frame_dw, text='Make an order', command=lambda: config_order(self.intvar_order, radiobutton_prefix_1, radiobutton_prefix_2, radiobutton_prefix_3, self.up_btn, self.dw_btn), variable=self.intvar_order, onvalue=1, offvalue=0)
+        checkbutton_order.grid(row=1, column=0, padx=4, pady=4)
 
-        sep_label = tk.Label(frame_mid_dw, text='Sep:')
-        sep_label.grid(row=1, column=1, padx=4, pady=4)
+        label_sep = tk.Label(frame_dw, text='Sep:')
+        label_sep.grid(row=1, column=1, padx=4, pady=4)
 
-        self.radio_value = tk.IntVar()
-        prefix_radio1 = tk.Radiobutton(frame_mid_dw, text='_', variable=self.radio_value, value=1)
-        prefix_radio1.grid(row=1, column=2, padx=4, pady=4)
-        prefix_radio1.config(state='disabled')
+        self.intvar_radio = tk.IntVar()
+        radiobutton_prefix_1 = tk.Radiobutton(frame_dw, text='_', variable=self.intvar_radio, value=1)
+        radiobutton_prefix_1.grid(row=1, column=2, padx=4, pady=4)
+        radiobutton_prefix_1.config(state='disabled')
 
-        prefix_radio2 = tk.Radiobutton(frame_mid_dw, text='-', variable=self.radio_value, value=2)
-        prefix_radio2.grid(row=1, column=3, padx=4, pady=4)
-        prefix_radio2.config(state='disabled')
+        radiobutton_prefix_2 = tk.Radiobutton(frame_dw, text='-', variable=self.intvar_radio, value=2)
+        radiobutton_prefix_2.grid(row=1, column=3, padx=4, pady=4)
+        radiobutton_prefix_2.config(state='disabled')
 
-        prefix_radio3 = tk.Radiobutton(frame_mid_dw, text='space', variable=self.radio_value, value=3)
-        prefix_radio3.grid(row=1, column=4, padx=4, pady=4)
-        prefix_radio3.config(state='disabled')
-        self.radio_value.set(1)
+        radiobutton_prefix_3 = tk.Radiobutton(frame_dw, text='space', variable=self.intvar_radio, value=3)
+        radiobutton_prefix_3.grid(row=1, column=4, padx=4, pady=4)
+        radiobutton_prefix_3.config(state='disabled')
+        self.intvar_radio.set(1)
 
-    def create_frame_dw(self):
-        frame_dw = tk.LabelFrame(self.root, text='Name list')
-        frame_dw.grid(row=2, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
-        frame_dw['font'] = self.font_label
+    def create_frame_name_list(self):
+        frame = tk.LabelFrame(self.root, text='Name list')
+        frame.grid(row=2, column=0, padx=4, pady=4, ipadx=1, ipady=1, sticky=tk.W)
+        frame['font'] = self.font_label
 
-        frame_dw_left = tk.Frame(frame_dw)
-        frame_dw_left.grid(row=0, column=0)
+        frame_left = tk.Frame(frame)
+        frame_left.grid(row=0, column=0)
 
-        scrollbar_read_x = tk.Scrollbar(frame_dw_left, orient=tk.HORIZONTAL)
-        scrollbar_read_y = tk.Scrollbar(frame_dw_left, orient=tk.VERTICAL)
+        scrollbar_read_x = tk.Scrollbar(frame_left, orient=tk.HORIZONTAL)
+        scrollbar_read_y = tk.Scrollbar(frame_left, orient=tk.VERTICAL)
 
         scrollbar_read_x.grid(row=1, column=0, sticky=tk.EW)
         scrollbar_read_y.grid(row=0, column=1, sticky=tk.NS)
 
-        self.list_box_read = tk.Listbox(frame_dw_left, width=22, xscrollcommand=scrollbar_read_x.set, yscrollcommand=scrollbar_read_y.set)
-        self.list_box_read.grid(row=0, column=0, padx=4, pady=4)
+        self.listbox_read = tk.Listbox(frame_left, width=22, xscrollcommand=scrollbar_read_x.set, yscrollcommand=scrollbar_read_y.set)
+        self.listbox_read.grid(row=0, column=0, padx=4, pady=4)
 
-        scrollbar_read_x.config(command=self.list_box_read.xview)
-        scrollbar_read_y.config(command=self.list_box_read.yview)
+        scrollbar_read_x.config(command=self.listbox_read.xview)
+        scrollbar_read_y.config(command=self.listbox_read.yview)
 
-        scrollbar_preview_x = tk.Scrollbar(frame_dw_left, orient=tk.HORIZONTAL)
-        scrollbar_preview_y = tk.Scrollbar(frame_dw_left, orient=tk.VERTICAL)
+        scrollbar_preview_x = tk.Scrollbar(frame_left, orient=tk.HORIZONTAL)
+        scrollbar_preview_y = tk.Scrollbar(frame_left, orient=tk.VERTICAL)
 
         scrollbar_preview_x.grid(row=1, column=2, sticky=tk.EW)
         scrollbar_preview_y.grid(row=0, column=3, sticky=tk.NS)
 
-        list_box_preview = tk.Listbox(frame_dw_left, width=22, xscrollcommand=scrollbar_preview_x.set, yscrollcommand=scrollbar_preview_y.set)
-        list_box_preview.grid(row=0, column=2, padx=4, pady=4)
+        listbox_preview = tk.Listbox(frame_left, width=22, xscrollcommand=scrollbar_preview_x.set, yscrollcommand=scrollbar_preview_y.set)
+        listbox_preview.grid(row=0, column=2, padx=4, pady=4)
 
-        scrollbar_preview_x.config(command=list_box_preview.xview)
-        scrollbar_preview_y.config(command=list_box_preview.yview)
+        scrollbar_preview_x.config(command=listbox_preview.xview)
+        scrollbar_preview_y.config(command=listbox_preview.yview)
 
-        frame_dw_right = tk.Frame(frame_dw)
-        frame_dw_right.grid(row=0, column=1)
+        frame_right = tk.Frame(frame)
+        frame_right.grid(row=0, column=1)
 
-        up_btn = tk.Button(frame_dw_right, text='Up', command=lambda: move_name(-1, self.list_box_read), width=6)
-        dw_btn = tk.Button(frame_dw_right, text='Down', command=lambda: move_name(1, self.list_box_read), width=6)
-        pre_btn = tk.Button(frame_dw_right, text='Preview', command=lambda: preview_names(self.list_box_read, list_box_preview, self.replace_state, self.suffix_state, self.order_state, self.find_entry, self.replace_entry, self.suffix_entry, self.radio_value), width=6)
-        run_btn = tk.Button(frame_dw_right, text='Run', command=lambda: run_rename(self.dir_variable, self.list_box_read, list_box_preview), width=6)
-        up_btn['state'] = tk.DISABLED
-        dw_btn['state'] = tk.DISABLED
+        button_up = tk.Button(frame_right, text='Up', command=lambda: move_name(-1, self.listbox_read), width=6)
+        button_down = tk.Button(frame_right, text='Down', command=lambda: move_name(1, self.listbox_read), width=6)
+        button_preview = tk.Button(frame_right, text='Preview', command=lambda: preview_names(self.listbox_read, listbox_preview, self.intvar_replace, self.intvar_suffix, self.intvar_order, self.entry_find, self.entry_replace, self.entry_suffix, self.intvar_radio), width=6)
+        button_run = tk.Button(frame_right, text='Run', command=lambda: run_rename(self.strvar_tgtdir, self.listbox_read, listbox_preview), width=6)
+        button_up['state'] = tk.DISABLED
+        button_down['state'] = tk.DISABLED
 
-        for idx, widget in enumerate(frame_dw_right.winfo_children()):
+        for idx, widget in enumerate(frame_right.winfo_children()):
             widget.grid(row=idx, column=0, padx=4, pady=4, ipadx=1, ipady=1)
-            widget['font'] = self.font_btn
+            widget['font'] = self.font_button
 
 
 if __name__ == '__main__':
