@@ -21,15 +21,12 @@ def clean_prefix(names: list):
         name_separated = name.partition('_')
         if name_separated[0].isdigit():
             name = name_separated[-1]
-
         name_separated = name.partition('-')
         if name_separated[0].isdigit():
             name = name_separated[-1]
-
         name_separated = name.partition(' ')
         if name_separated[0].isdigit():
             name = name_separated[-1]
-
         new_names.append(name)
     return new_names
 
@@ -39,18 +36,6 @@ def reorder_names(names: list, separator: str):
     num_name = len(names)
     decimal = floor(log10(num_name)) + 1
     return ['{idx:{fill}{width}}{sep}{name}'.format(idx=idx, fill='0', width=decimal, sep=separator, name=name) for idx, name in enumerate(names)]
-
-
-def check_repeated(list_box: tk.Listbox, names: list):
-    global name_repeated
-    name_repeated = False
-
-    for idx1, name1 in enumerate(names):
-        for idx2, name2 in enumerate(names[idx1+1:]):
-            if name2 == name1:
-                name_repeated = True
-                list_box.itemconfig(idx1, {'bg': 'red'})
-                list_box.itemconfig(idx1+idx2+1, {'bg': 'red'})
 
 
 class AppWidgets(TypedDict):
@@ -83,6 +68,7 @@ class App:
         self.font_label = font.Font(family='Helvetica', size=10)
         self.font_button = font.Font(family='Helvetica', size=10)
         self.app_widgets = AppWidgets()
+        self.name_repeated = False
         self.create_frame_target_directory()
         self.create_frame_naming_method()
         self.create_frame_name_list()
@@ -347,6 +333,15 @@ class App:
             self.refresh_listbox(listbox_read, names)
             listbox_read.select_set(id_next)
 
+    def check_repeated(self, listbox: tk.Listbox, names: list):
+        self.name_repeated = False
+        for idx1, name1 in enumerate(names):
+            for idx2, name2 in enumerate(names[idx1+1:]):
+                if name2 == name1:
+                    self.name_repeated = True
+                    listbox.itemconfig(idx1, {'bg': 'red'})
+                    listbox.itemconfig(idx1+idx2+1, {'bg': 'red'})
+
     def preview_names(self):
         listbox_read = self.app_widgets['listbox_read']
         listbox_preview = self.app_widgets['listbox_preview']
@@ -366,7 +361,7 @@ class App:
             separator = {1: '_', 2: '-', 3: ' '}[intvar_sep.get()]
             names = reorder_names(names, separator)
         self.refresh_listbox(listbox_preview, names)
-        check_repeated(listbox_preview, names)
+        self.check_repeated(listbox_preview, names)
 
     def run_rename(self):
         strvar_tgtdir = self.app_widgets['strvar_tgtdir']
@@ -376,7 +371,7 @@ class App:
         names_src = list(listbox_read.get(0, tk.END))
         names_dst = list(listbox_preview.get(0, tk.END))
         try:
-            if name_repeated:
+            if self.name_repeated:
                 raise Exception('There are repeated names after renaming.')
             else:
                 for name_src, name_dst in zip(names_src, names_dst):
