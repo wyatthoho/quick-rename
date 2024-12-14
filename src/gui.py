@@ -86,6 +86,7 @@ class App:
     NAME = 'QuickRename'
     PADS = {'padx': 4, 'pady': 4}
     IPADS = {'ipadx': 1, 'ipady': 1}
+    BUTTON_WIDTH = 6
 
     def __init__(self):
         self.root = self.initialize_main_window()
@@ -134,11 +135,11 @@ class App:
         radiobutton_folder.grid(row=0, column=2)
         intvar_applyto.set(1)
 
-        button_choose = tk.Button(frame_right, text='Choose', command=self.open_dir, width=6)
+        button_choose = tk.Button(frame_right, text='Choose', command=self.open_dir, width=App.BUTTON_WIDTH)
         button_choose.grid(row=0, column=0, **App.PADS, **App.IPADS)
         button_choose['font'] = self.font_button
 
-        button_read = tk.Button(frame_right, text='Read', command=self.read_names, width=6)
+        button_read = tk.Button(frame_right, text='Read', command=self.read_names, width=App.BUTTON_WIDTH)
         button_read.grid(row=1, column=0, **App.PADS, **App.IPADS)
         button_read['font'] = self.font_button
 
@@ -170,7 +171,6 @@ class App:
         entry_find = tk.Entry(frame_up, width=13)
         entry_find.grid(row=0, column=2, **App.PADS)
         entry_find.config(state='disabled')
-
 
         label_replace = tk.Label(frame_up, text='Replace:')
         label_replace.grid(row=0, column=3, **App.PADS)
@@ -257,10 +257,10 @@ class App:
         frame_right = tk.Frame(frame)
         frame_right.grid(row=0, column=1)
 
-        button_up = tk.Button(frame_right, text='Up', command=lambda: self.move_name(-1), width=6)
-        button_down = tk.Button(frame_right, text='Down', command=lambda: self.move_name(1), width=6)
-        button_preview = tk.Button(frame_right, text='Preview', command=self.preview_names, width=6)
-        button_run = tk.Button(frame_right, text='Run', command=self.run_rename, width=6)
+        button_up = tk.Button(frame_right, text='Up', command=lambda: self.move_name(-1), width=App.BUTTON_WIDTH)
+        button_down = tk.Button(frame_right, text='Down', command=lambda: self.move_name(1), width=App.BUTTON_WIDTH)
+        button_preview = tk.Button(frame_right, text='Preview', command=self.preview_names, width=App.BUTTON_WIDTH)
+        button_run = tk.Button(frame_right, text='Run', command=self.run_rename, width=App.BUTTON_WIDTH)
         button_up['state'] = tk.DISABLED
         button_down['state'] = tk.DISABLED
 
