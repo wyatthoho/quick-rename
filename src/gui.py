@@ -7,14 +7,11 @@ from tkinter import font
 from typing import TypedDict
 
 
-def replace_names(names: list, find_entry: tk.Entry, replace_entry: tk.Entry):
-    find_str = find_entry.get()
-    replace_str = replace_entry.get()
+def replace_names(names: list, find_str: str, replace_str: str):
     return [name.replace(find_str, replace_str) for name in names]
 
 
-def add_suffix(names: list, suffix_entry: tk.Entry):
-    suffix = suffix_entry.get()
+def add_suffix(names: list, suffix: str):
     return [''.join([_str + suffix if idx == 0 else _str for idx, _str in enumerate(name.rpartition('.'))]) for name in names]
 
 
@@ -37,18 +34,11 @@ def clean_prefix(names: list):
     return new_names
 
 
-def reorder_names(names: list, radio_value: tk.IntVar):
+def reorder_names(names: list, separator: str):
     names = clean_prefix(names)
-    if radio_value.get() == 1:
-        sep = '_'
-    elif radio_value.get() == 2:
-        sep = '-'
-    elif radio_value.get() == 3:
-        sep = ' '
-
     num_name = len(names)
     decimal = floor(log10(num_name)) + 1
-    return ['{idx:{fill}{width}}{sep}{name}'.format(idx=idx, fill='0', width=decimal, sep=sep, name=name) for idx, name in enumerate(names)]
+    return ['{idx:{fill}{width}}{sep}{name}'.format(idx=idx, fill='0', width=decimal, sep=separator, name=name) for idx, name in enumerate(names)]
 
 
 def check_repeated(list_box: tk.Listbox, names: list):
@@ -369,11 +359,12 @@ class App:
         intvar_sep = self.app_widgets['intvar_sep']
         names = list(listbox_read.get(0, tk.END))
         if intvar_replace.get():
-            names = replace_names(names, entry_find, entry_replace)
+            names = replace_names(names, entry_find.get(), entry_replace.get())
         if intvar_suffix.get():
-            names = add_suffix(names, entry_suffix)
+            names = add_suffix(names, entry_suffix.get())
         if intvar_make_order.get():
-            names = reorder_names(names, intvar_sep)
+            separator = {1: '_', 2: '-', 3: ' '}[intvar_sep.get()]
+            names = reorder_names(names, separator)
         self.refresh_listbox(listbox_preview, names)
         check_repeated(listbox_preview, names)
 
