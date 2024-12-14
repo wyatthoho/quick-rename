@@ -98,6 +98,7 @@ class App:
         self.create_frame_name_list()
         self.root.mainloop()
 
+    # typesetting
     def initialize_main_window(self):
         root = tk.Tk()
         root.title(App.NAME)
@@ -273,15 +274,16 @@ class App:
         self.app_widgets['button_up'] = button_up
         self.app_widgets['button_down'] = button_down
 
+    # actions
     def open_dir(self):
         strvar_tgtdir = self.app_widgets['strvar_tgtdir']
         dir_name = filedialog.askdirectory(title='Choose the directory')
         strvar_tgtdir.set(dir_name)
 
-    def refresh_list_box(self, list_box: tk.Listbox, names: list):
-        list_box.delete(0, tk.END)
+    def refresh_listbox(self, listbox: tk.Listbox, names: list):
+        listbox.delete(0, tk.END)
         for idx, name in enumerate(names):
-            list_box.insert(idx, name)
+            listbox.insert(idx, name)
 
     def read_names(self):
         strvar_tgtdir = self.app_widgets['strvar_tgtdir']
@@ -293,7 +295,7 @@ class App:
             names = [name for name in tgtnames if os.path.isfile(os.path.join(tgtdir, name))]
         else:
             names = [name for name in tgtnames if not os.path.isfile(os.path.join(tgtdir, name))]
-        self.refresh_list_box(listbox_read, names)
+        self.refresh_listbox(listbox_read, names)
 
     def config_replace(self):
         intvar_replace = self.app_widgets['intvar_replace']
@@ -321,7 +323,6 @@ class App:
         radiobutton_prefix_3 = self.app_widgets['radiobutton_prefix_3']
         button_up = self.app_widgets['button_up']
         button_down = self.app_widgets['button_down']
-
         if intvar_make_order.get():
             radiobutton_prefix_1.config(state='normal')
             radiobutton_prefix_2.config(state='normal')
@@ -340,24 +341,20 @@ class App:
         moved = False
         names = list(listbox_read.get(0, tk.END))
         names_dict = {idx: name for idx, name in enumerate(names)}
-
         if inc < 0:
             id_boundary = 0
         else:
             id_boundary = len(names_dict) - 1
-
         id_sel = listbox_read.curselection()[0]
         if abs(id_sel - id_boundary) > 0:
             id_next = id_sel + inc
             names_dict[id_sel], names_dict[id_next] = names_dict[id_next], names_dict[id_sel]
             moved = True
-
         if moved:
             keys = list(names_dict.keys())
             keys.sort()
             names = [names_dict[key] for key in keys]
-
-            self.refresh_list_box(listbox_read, names)
+            self.refresh_listbox(listbox_read, names)
             listbox_read.select_set(id_next)
 
     def preview_names(self):
@@ -370,7 +367,6 @@ class App:
         entry_replace = self.app_widgets['entry_replace']
         entry_suffix = self.app_widgets['entry_suffix']
         intvar_sep = self.app_widgets['intvar_sep']
-
         names = list(listbox_read.get(0, tk.END))
         if intvar_replace.get():
             names = replace_names(names, entry_find, entry_replace)
@@ -378,19 +374,16 @@ class App:
             names = add_suffix(names, entry_suffix)
         if intvar_make_order.get():
             names = reorder_names(names, intvar_sep)
-
-        self.refresh_list_box(listbox_preview, names)
+        self.refresh_listbox(listbox_preview, names)
         check_repeated(listbox_preview, names)
 
     def run_rename(self):
         strvar_tgtdir = self.app_widgets['strvar_tgtdir']
         listbox_read = self.app_widgets['listbox_read']
         listbox_preview = self.app_widgets['listbox_preview']
-
         tgt_dir_name = strvar_tgtdir.get()
         names_src = list(listbox_read.get(0, tk.END))
         names_dst = list(listbox_preview.get(0, tk.END))
-
         try:
             if name_repeated:
                 raise Exception('There are repeated names after renaming.')
