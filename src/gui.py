@@ -7,35 +7,35 @@ from tkinter import font
 from typing import TypedDict
 
 
-def replace_names(names: list, find_str: str, replace_str: str):
+def replace_names(names: list[str], find_str: str, replace_str: str) -> list[str]:
     return [name.replace(find_str, replace_str) for name in names]
 
 
-def add_suffix(names: list, suffix: str):
-    return [''.join([_str + suffix if idx == 0 else _str for idx, _str in enumerate(name.rpartition('.'))]) for name in names]
+def add_suffix(names: list[str], suffix: str) -> list[str]:
+    def add_to_base(name: str) -> str:
+        base, sep, ext = name.rpartition('.')
+        return f'{base}{suffix}.{ext}' if sep else f'{name}{suffix}'  
+    return [add_to_base(name) for name in names]
 
 
-def clean_prefix(names: list):
-    new_names = []
-    for name in names:
-        name_separated = name.partition('_')
-        if name_separated[0].isdigit():
-            name = name_separated[-1]
-        name_separated = name.partition('-')
-        if name_separated[0].isdigit():
-            name = name_separated[-1]
-        name_separated = name.partition(' ')
-        if name_separated[0].isdigit():
-            name = name_separated[-1]
-        new_names.append(name)
-    return new_names
+def clean_prefix(names: list[str]) -> list[str]:
+    def remove_prefix(name: str) -> str:
+        for sep in ['_', '-', ' ']:
+            prefix, sep_found, remainder = name.partition(sep)
+            if prefix.isdigit():
+                return remainder
+        return name
+    return [remove_prefix(name) for name in names]
 
 
-def reorder_names(names: list, separator: str):
+def reorder_names(names: list, separator: str) -> list[str]:
     names = clean_prefix(names)
     num_name = len(names)
     decimal = floor(log10(num_name)) + 1
-    return ['{idx:{fill}{width}}{sep}{name}'.format(idx=idx, fill='0', width=decimal, sep=separator, name=name) for idx, name in enumerate(names)]
+    return [
+        f'{idx:0{decimal}d}{separator}{name}'
+        for idx, name in enumerate(names)
+    ]
 
 
 class AppWidgets(TypedDict):
@@ -379,10 +379,10 @@ class App:
                     path_dst = os.path.join(tgt_dir_name, name_dst)
                     os.rename(src=path_src, dst=path_dst)
         except Exception as e:
-            tk.messagebox.showerror("Error", e.args[0])
+            tk.messagebox.showerror('Error', e.args[0])
             listbox_preview.delete(0, tk.END)
         else:
-            tk.messagebox.showinfo("Message", "Renamed successfully.")
+            tk.messagebox.showinfo('Message', 'Renamed successfully.')
             listbox_read.delete(0, tk.END)
             listbox_preview.delete(0, tk.END)
 
