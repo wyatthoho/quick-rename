@@ -38,6 +38,11 @@ def reorder_names(names: list, separator: str) -> list[str]:
     ]
 
 
+def toggle_widget_state(widget: tk.Widget, enable: bool):
+    '''Enable or disable a widget based on the enable flag.'''
+    widget.config(state='normal' if enable else 'disabled')
+
+
 class AppWidgets(TypedDict):
     strvar_tgtdir: tk.StringVar
     intvar_applyto: tk.IntVar
@@ -277,20 +282,15 @@ class App:
         intvar_replace = self.app_widgets['intvar_replace']
         entry_find = self.app_widgets['entry_find']
         entry_replace = self.app_widgets['entry_replace']
-        if intvar_replace.get():
-            entry_find.config(state='normal')
-            entry_replace.config(state='normal')
-        else:
-            entry_find.config(state='disabled')
-            entry_replace.config(state='disabled')
+        enable = bool(intvar_replace.get())
+        toggle_widget_state(entry_find, enable)
+        toggle_widget_state(entry_replace, enable)
 
     def config_suffix(self):
         intvar_suffix = self.app_widgets['intvar_suffix']
         entry_suffix = self.app_widgets['entry_suffix']
-        if intvar_suffix.get():
-            entry_suffix.config(state='normal')
-        else:
-            entry_suffix.config(state='disabled')
+        enable = bool(intvar_suffix.get())
+        toggle_widget_state(entry_suffix, enable)
 
     def config_order(self):
         intvar_make_order = self.app_widgets['intvar_make_order']
@@ -299,18 +299,12 @@ class App:
         radiobutton_prefix_3 = self.app_widgets['radiobutton_prefix_3']
         button_up = self.app_widgets['button_up']
         button_down = self.app_widgets['button_down']
-        if intvar_make_order.get():
-            radiobutton_prefix_1.config(state='normal')
-            radiobutton_prefix_2.config(state='normal')
-            radiobutton_prefix_3.config(state='normal')
-            button_up['state'] = tk.NORMAL
-            button_down['state'] = tk.NORMAL
-        else:
-            radiobutton_prefix_1.config(state='disabled')
-            radiobutton_prefix_2.config(state='disabled')
-            radiobutton_prefix_3.config(state='disabled')
-            button_up['state'] = tk.DISABLED
-            button_down['state'] = tk.DISABLED
+        enable = bool(intvar_make_order.get())
+        toggle_widget_state(radiobutton_prefix_1, enable)
+        toggle_widget_state(radiobutton_prefix_2, enable)
+        toggle_widget_state(radiobutton_prefix_3, enable)
+        toggle_widget_state(button_up, enable)
+        toggle_widget_state(button_down, enable)
 
     def move_name(self, inc: int):
         listbox_read = self.app_widgets['listbox_read']
