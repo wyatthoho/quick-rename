@@ -121,7 +121,7 @@ class App:
         button_choose.grid(row=0, column=0, **App.PADS, **App.IPADS)
         button_choose['font'] = self.font_button
 
-        button_read = tk.Button(frame_right, text='Read', command=self.read_names, width=App.BUTTON_WIDTH)
+        button_read = tk.Button(frame_right, text='Read', command=self.load_target_names, width=App.BUTTON_WIDTH)
         button_read.grid(row=1, column=0, **App.PADS, **App.IPADS)
         button_read['font'] = self.font_button
 
@@ -261,12 +261,12 @@ class App:
         dir_name = filedialog.askdirectory(title='Choose the directory')
         strvar_tgtdir.set(dir_name)
 
-    def refresh_listbox(self, listbox: tk.Listbox, names: list):
+    def update_listbox_content(self, listbox: tk.Listbox, names: list):
         listbox.delete(0, tk.END)
         for idx, name in enumerate(names):
             listbox.insert(idx, name)
 
-    def read_names(self):
+    def load_target_names(self):
         strvar_tgtdir = self.app_widgets['strvar_tgtdir']
         intvar_applyto = self.app_widgets['intvar_applyto']
         listbox_read = self.app_widgets['listbox_read']
@@ -276,7 +276,7 @@ class App:
             names = [name for name in tgtnames if os.path.isfile(os.path.join(tgtdir, name))]
         else:
             names = [name for name in tgtnames if not os.path.isfile(os.path.join(tgtdir, name))]
-        self.refresh_listbox(listbox_read, names)
+        self.update_listbox_content(listbox_read, names)
 
     def config_replace(self):
         intvar_replace = self.app_widgets['intvar_replace']
@@ -324,10 +324,10 @@ class App:
             keys = list(names_dict.keys())
             keys.sort()
             names = [names_dict[key] for key in keys]
-            self.refresh_listbox(listbox_read, names)
+            self.update_listbox_content(listbox_read, names)
             listbox_read.select_set(id_next)
 
-    def check_repeated(self, listbox: tk.Listbox, names: list):
+    def highlight_duplicates(self, listbox: tk.Listbox, names: list):
         self.name_repeated = False
         for idx1, name1 in enumerate(names):
             for idx2, name2 in enumerate(names[idx1+1:]):
@@ -354,8 +354,8 @@ class App:
         if intvar_make_order.get():
             separator = {1: '_', 2: '-', 3: ' '}[intvar_sep.get()]
             names = reorder_names(names, separator)
-        self.refresh_listbox(listbox_preview, names)
-        self.check_repeated(listbox_preview, names)
+        self.update_listbox_content(listbox_preview, names)
+        self.highlight_duplicates(listbox_preview, names)
 
     def run_rename(self):
         strvar_tgtdir = self.app_widgets['strvar_tgtdir']
