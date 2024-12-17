@@ -117,7 +117,7 @@ class App:
         radiobutton_folder.grid(row=0, column=2)
         intvar_applyto.set(1)
 
-        button_choose = tk.Button(frame_right, text='Choose', command=self.open_dir, width=App.BUTTON_WIDTH)
+        button_choose = tk.Button(frame_right, text='Choose', command=self.choose_target_directory, width=App.BUTTON_WIDTH)
         button_choose.grid(row=0, column=0, **App.PADS, **App.IPADS)
         button_choose['font'] = self.font_button
 
@@ -256,7 +256,7 @@ class App:
         self.app_widgets['button_down'] = button_down
 
     # actions
-    def open_dir(self):
+    def choose_target_directory(self):
         strvar_tgtdir = self.app_widgets['strvar_tgtdir']
         dir_name = filedialog.askdirectory(title='Choose the directory')
         strvar_tgtdir.set(dir_name)
