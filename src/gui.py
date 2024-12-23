@@ -259,8 +259,10 @@ class App:
         frame_bottomright.grid(row=2, column=2, columnspan=2)
         button_preview = tk.Button(frame_bottomright, text='Preview', command=self.preview_names, width=App.BUTTON_WIDTH)
         button_preview.grid(row=0, column=1, **App.PADS, **App.IPADS)
+        button_preview['font'] = self.font_button
         button_run = tk.Button(frame_bottomright, text='Run', command=self.run_rename, width=App.BUTTON_WIDTH)
         button_run.grid(row=0, column=2, **App.PADS, **App.IPADS)
+        button_run['font'] = self.font_button
 
         self.app_widgets['listbox_read'] = listbox_read
         self.app_widgets['listbox_preview'] = listbox_preview
