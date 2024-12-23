@@ -84,7 +84,7 @@ class App:
     def initialize_main_window(self):
         root = tk.Tk()
         root.title(App.NAME)
-        logopath = Path(__file__).parent.parent.joinpath('image', 'w.ico')
+        logopath = Path(__file__).parent.parent.joinpath('img', 'favicon.ico')
         root.iconbitmap(logopath)
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=0)
