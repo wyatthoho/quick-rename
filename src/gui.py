@@ -217,46 +217,49 @@ class App:
         frame = tk.LabelFrame(self.root, text='Name list')
         frame.grid(row=2, column=0, sticky=tk.NSEW, **App.PADS, **App.IPADS)
         frame.rowconfigure(0, weight=1)
+        frame.rowconfigure(1, weight=0)
+        frame.rowconfigure(2, weight=0)
         frame.columnconfigure(0, weight=1)
         frame.columnconfigure(1, weight=0)
+        frame.columnconfigure(2, weight=1)
+        frame.columnconfigure(3, weight=0)
         frame['font'] = self.font_label
 
-        frame_left = tk.Frame(frame)
-        frame_left.grid(row=0, column=0, sticky=tk.NSEW)
-        frame_left.rowconfigure(0, weight=1)
-        frame_left.columnconfigure(0, weight=1)
-        frame_left.columnconfigure(2, weight=1)
-
-        scrollbar_read_x = tk.Scrollbar(frame_left, orient=tk.HORIZONTAL)
-        scrollbar_read_y = tk.Scrollbar(frame_left, orient=tk.VERTICAL)
+        scrollbar_read_x = tk.Scrollbar(frame, orient=tk.HORIZONTAL)
+        scrollbar_read_y = tk.Scrollbar(frame, orient=tk.VERTICAL)
         scrollbar_read_x.grid(row=1, column=0, sticky=tk.EW)
         scrollbar_read_y.grid(row=0, column=1, sticky=tk.NS)
-        listbox_read = tk.Listbox(frame_left, width=22, xscrollcommand=scrollbar_read_x.set, yscrollcommand=scrollbar_read_y.set)
+        listbox_read = tk.Listbox(frame, width=22, xscrollcommand=scrollbar_read_x.set, yscrollcommand=scrollbar_read_y.set)
         listbox_read.grid(row=0, column=0, sticky=tk.NSEW, **App.PADS)
         scrollbar_read_x.config(command=listbox_read.xview)
         scrollbar_read_y.config(command=listbox_read.yview)
 
-        scrollbar_preview_x = tk.Scrollbar(frame_left, orient=tk.HORIZONTAL)
-        scrollbar_preview_y = tk.Scrollbar(frame_left, orient=tk.VERTICAL)
+        scrollbar_preview_x = tk.Scrollbar(frame, orient=tk.HORIZONTAL)
+        scrollbar_preview_y = tk.Scrollbar(frame, orient=tk.VERTICAL)
         scrollbar_preview_x.grid(row=1, column=2, sticky=tk.EW)
         scrollbar_preview_y.grid(row=0, column=3, sticky=tk.NS)
-        listbox_preview = tk.Listbox(frame_left, width=22, xscrollcommand=scrollbar_preview_x.set, yscrollcommand=scrollbar_preview_y.set)
+        listbox_preview = tk.Listbox(frame, width=22, xscrollcommand=scrollbar_preview_x.set, yscrollcommand=scrollbar_preview_y.set)
         listbox_preview.grid(row=0, column=2, sticky=tk.NSEW, **App.PADS)
         scrollbar_preview_x.config(command=listbox_preview.xview)
         scrollbar_preview_y.config(command=listbox_preview.yview)
 
-        frame_right = tk.Frame(frame)
-        frame_right.grid(row=0, column=1)
-        button_up = tk.Button(frame_right, text='Up', command=lambda: self.move_name(-1), width=App.BUTTON_WIDTH)
-        button_down = tk.Button(frame_right, text='Down', command=lambda: self.move_name(1), width=App.BUTTON_WIDTH)
-        button_preview = tk.Button(frame_right, text='Preview', command=self.preview_names, width=App.BUTTON_WIDTH)
-        button_run = tk.Button(frame_right, text='Run', command=self.run_rename, width=App.BUTTON_WIDTH)
+        frame_bottomleft = tk.Frame(frame)
+        frame_bottomleft.grid(row=2, column=0, columnspan=2)
+        button_up = tk.Button(frame_bottomleft, text='Up', command=lambda: self.move_name(-1), width=App.BUTTON_WIDTH)
+        button_up.grid(row=0, column=1, **App.PADS, **App.IPADS)
+        button_up['font'] = self.font_button
         button_up['state'] = tk.DISABLED
+        button_down = tk.Button(frame_bottomleft, text='Down', command=lambda: self.move_name(1), width=App.BUTTON_WIDTH)
+        button_down.grid(row=0, column=2, **App.PADS, **App.IPADS)
+        button_down['font'] = self.font_button
         button_down['state'] = tk.DISABLED
 
-        for idx, widget in enumerate(frame_right.winfo_children()):
-            widget.grid(row=idx, column=0, **App.PADS, **App.IPADS)
-            widget['font'] = self.font_button
+        frame_bottomright = tk.Frame(frame)
+        frame_bottomright.grid(row=2, column=2, columnspan=2)
+        button_preview = tk.Button(frame_bottomright, text='Preview', command=self.preview_names, width=App.BUTTON_WIDTH)
+        button_preview.grid(row=0, column=1, **App.PADS, **App.IPADS)
+        button_run = tk.Button(frame_bottomright, text='Run', command=self.run_rename, width=App.BUTTON_WIDTH)
+        button_run.grid(row=0, column=2, **App.PADS, **App.IPADS)
 
         self.app_widgets['listbox_read'] = listbox_read
         self.app_widgets['listbox_preview'] = listbox_preview
