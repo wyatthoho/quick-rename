@@ -64,10 +64,11 @@ class AppWidgets(TypedDict):
 
 class App:
     NAME = 'QuickRename'
-    ROOT_MINSIZE = {'width': 450, 'height': 460}
+    ROOT_MINSIZE = {'width': 680, 'height': 500}
     PADS = {'padx': 4, 'pady': 4}
     IPADS = {'ipadx': 1, 'ipady': 1}
     BUTTON_WIDTH = 6
+    ENTRY_WIDTH = 30
 
     def __init__(self):
         self.root = self.initialize_main_window()
@@ -159,14 +160,14 @@ class App:
         label_find = tk.Label(frame_up, text='Find:')
         label_find.grid(row=0, column=1, **App.PADS)
 
-        entry_find = tk.Entry(frame_up, width=13)
+        entry_find = tk.Entry(frame_up, width=App.ENTRY_WIDTH)
         entry_find.grid(row=0, column=2, **App.PADS)
         entry_find.config(state='disabled')
 
         label_replace = tk.Label(frame_up, text='Replace:')
         label_replace.grid(row=0, column=3, **App.PADS)
 
-        entry_replace = tk.Entry(frame_up, width=13)
+        entry_replace = tk.Entry(frame_up, width=App.ENTRY_WIDTH)
         entry_replace.grid(row=0, column=4, **App.PADS)
         entry_replace.config(state='disabled')
 
@@ -177,7 +178,7 @@ class App:
         label_suffix = tk.Label(frame_mid, text='Suffix:')
         label_suffix.grid(row=0, column=1, **App.PADS)
 
-        entry_suffix = tk.Entry(frame_mid, width=13)
+        entry_suffix = tk.Entry(frame_mid, width=App.ENTRY_WIDTH)
         entry_suffix.grid(row=0, column=2, **App.PADS)
         entry_suffix.config(state='disabled')
 
