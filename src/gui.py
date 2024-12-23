@@ -77,7 +77,7 @@ class App:
         self.app_widgets = AppWidgets()
         self.name_repeated = False
         self.create_frame_target_directory()
-        self.create_frame_naming_method()
+        self.create_frame_renaming_method()
         self.create_frame_name_list()
         self.root.mainloop()
 
@@ -139,8 +139,8 @@ class App:
         self.app_widgets['intvar_applyto'] = intvar_applyto
 
 
-    def create_frame_naming_method(self):
-        frame = tk.LabelFrame(self.root, text='Naming method')
+    def create_frame_renaming_method(self):
+        frame = tk.LabelFrame(self.root, text='Renaming method')
         frame.grid(row=1, column=0, sticky=tk.NSEW, **App.PADS, **App.IPADS)
         frame['font'] = self.font_label
 
