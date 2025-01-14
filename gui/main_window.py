@@ -1,6 +1,5 @@
 import os
 import tkinter as tk
-from pathlib import Path
 from tkinter import filedialog
 from tkinter import font
 from typing import TypedDict
@@ -31,6 +30,9 @@ class AppWidgets(TypedDict):
 class App:
     NAME = 'QuickRename'
     ROOT_MINSIZE = {'width': 680, 'height': 500}
+    LOGO_PATH = 'img\\favicon.ico'
+    FONT_FAMILY = 'Helvetica'
+    FONT_SIZE = 10
     PADS = {'padx': 4, 'pady': 4}
     IPADS = {'ipadx': 1, 'ipady': 1}
     BUTTON_WIDTH = 6
@@ -38,8 +40,7 @@ class App:
 
     def __init__(self):
         self.root = self.initialize_main_window()
-        self.font_label = font.Font(family='Helvetica', size=10)
-        self.font_button = font.Font(family='Helvetica', size=10)
+        self.font = font.Font(family=App.FONT_FAMILY, size=App.FONT_SIZE)
         self.app_widgets = AppWidgets()
         self.name_repeated = False
         self.create_frame_target_directory()
@@ -51,8 +52,7 @@ class App:
     def initialize_main_window(self):
         root = tk.Tk()
         root.title(App.NAME)
-        logopath = Path(__file__).parent.parent.joinpath('img', 'favicon.ico')
-        root.iconbitmap(logopath)
+        root.iconbitmap(App.LOGO_PATH)
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=0)
         root.rowconfigure(1, weight=0)
@@ -65,7 +65,7 @@ class App:
         frame = tk.LabelFrame(self.root, text='Choose the directory')
         frame.grid(row=0, column=0, sticky=tk.NSEW, **App.PADS, **App.IPADS)
         frame.columnconfigure(0, weight=1)
-        frame['font'] = self.font_label
+        frame['font'] = self.font
 
         frame_up = tk.Frame(frame)
         frame_up.grid(row=0, column=0, sticky=tk.NSEW)
@@ -95,11 +95,11 @@ class App:
 
         button_choose = tk.Button(frame_right, text='Choose', command=self.choose_target_directory, width=App.BUTTON_WIDTH)
         button_choose.grid(row=0, column=0, sticky=tk.E, **App.PADS, **App.IPADS)
-        button_choose['font'] = self.font_button
+        button_choose['font'] = self.font
 
         button_read = tk.Button(frame_right, text='Read', command=self.load_target_names, width=App.BUTTON_WIDTH)
         button_read.grid(row=1, column=0, **App.PADS, **App.IPADS)
-        button_read['font'] = self.font_button
+        button_read['font'] = self.font
 
         self.app_widgets['strvar_tgtdir'] = strvar_tgtdir
         self.app_widgets['intvar_applyto'] = intvar_applyto
@@ -108,7 +108,7 @@ class App:
     def create_frame_renaming_method(self):
         frame = tk.LabelFrame(self.root, text='Renaming method')
         frame.grid(row=1, column=0, sticky=tk.NSEW, **App.PADS, **App.IPADS)
-        frame['font'] = self.font_label
+        frame['font'] = self.font
 
         frame_up = tk.Frame(frame)
         frame_up.grid(row=0, column=0, sticky=tk.NSEW)
@@ -190,7 +190,7 @@ class App:
         frame.columnconfigure(1, weight=0)
         frame.columnconfigure(2, weight=1)
         frame.columnconfigure(3, weight=0)
-        frame['font'] = self.font_label
+        frame['font'] = self.font
 
         scrollbar_read_x = tk.Scrollbar(frame, orient=tk.HORIZONTAL)
         scrollbar_read_y = tk.Scrollbar(frame, orient=tk.VERTICAL)
@@ -214,21 +214,21 @@ class App:
         frame_bottomleft.grid(row=2, column=0, columnspan=2)
         button_up = tk.Button(frame_bottomleft, text='Up', command=lambda: self.move_name(-1), width=App.BUTTON_WIDTH)
         button_up.grid(row=0, column=1, **App.PADS, **App.IPADS)
-        button_up['font'] = self.font_button
+        button_up['font'] = self.font
         button_up['state'] = tk.DISABLED
         button_down = tk.Button(frame_bottomleft, text='Down', command=lambda: self.move_name(1), width=App.BUTTON_WIDTH)
         button_down.grid(row=0, column=2, **App.PADS, **App.IPADS)
-        button_down['font'] = self.font_button
+        button_down['font'] = self.font
         button_down['state'] = tk.DISABLED
 
         frame_bottomright = tk.Frame(frame)
         frame_bottomright.grid(row=2, column=2, columnspan=2)
         button_preview = tk.Button(frame_bottomright, text='Preview', command=self.preview_names, width=App.BUTTON_WIDTH)
         button_preview.grid(row=0, column=1, **App.PADS, **App.IPADS)
-        button_preview['font'] = self.font_button
+        button_preview['font'] = self.font
         button_run = tk.Button(frame_bottomright, text='Run', command=self.run_rename, width=App.BUTTON_WIDTH)
         button_run.grid(row=0, column=2, **App.PADS, **App.IPADS)
-        button_run['font'] = self.font_button
+        button_run['font'] = self.font
 
         self.app_widgets['listbox_read'] = listbox_read
         self.app_widgets['listbox_preview'] = listbox_preview
