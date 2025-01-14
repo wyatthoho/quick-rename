@@ -5,8 +5,8 @@ from tkinter import filedialog
 from tkinter import font
 from typing import TypedDict
 
-from manipulate_names import *
-from manipulate_tk_widgets import *
+from logic.filename_manipulations import *
+from logic.widgets_manipulations import *
 
 
 class AppWidgets(TypedDict):
@@ -360,6 +360,3 @@ class App:
             listbox_read.delete(0, tk.END)
             listbox_preview.delete(0, tk.END)
 
-
-if __name__ == '__main__':
-    App()
