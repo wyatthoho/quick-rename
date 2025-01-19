@@ -241,11 +241,6 @@ class App:
         dir_name = filedialog.askdirectory(title='Choose the directory')
         strvar_tgtdir.set(dir_name)
 
-    def update_listbox_content(self, listbox: tk.Listbox, names: list):
-        listbox.delete(0, tk.END)
-        for idx, name in enumerate(names):
-            listbox.insert(idx, name)
-
     def load_target_names(self):
         strvar_tgtdir = self.app_widgets['strvar_tgtdir']
         intvar_applyto = self.app_widgets['intvar_applyto']
@@ -256,7 +251,7 @@ class App:
             names = [name for name in tgtnames if os.path.isfile(os.path.join(tgtdir, name))]
         else:
             names = [name for name in tgtnames if not os.path.isfile(os.path.join(tgtdir, name))]
-        self.update_listbox_content(listbox_read, names)
+        widget_utils.update_listbox_content(listbox_read, names)
 
     def config_replace(self):
         intvar_replace = self.app_widgets['intvar_replace']
@@ -304,7 +299,7 @@ class App:
             keys = list(names_dict.keys())
             keys.sort()
             names = [names_dict[key] for key in keys]
-            self.update_listbox_content(listbox_read, names)
+            widget_utils.update_listbox_content(listbox_read, names)
             listbox_read.select_set(id_next)
 
     def highlight_duplicates(self, listbox: tk.Listbox, names: list):
@@ -334,7 +329,7 @@ class App:
         if intvar_make_order.get():
             separator = {1: '_', 2: '-', 3: ' '}[intvar_sep.get()]
             names = stringlist_utils.reorder_names(names, separator)
-        self.update_listbox_content(listbox_preview, names)
+        widget_utils.update_listbox_content(listbox_preview, names)
         self.highlight_duplicates(listbox_preview, names)
 
     def run_rename(self):
