@@ -4,8 +4,8 @@ from tkinter import filedialog
 from tkinter import font
 from typing import TypedDict
 
-from logic.filename_manipulations import *
-from logic.widgets_manipulations import *
+import utils.stringlist_utils as stringlist_utils
+import utils.widget_utils as widget_utils
 
 
 class AppWidgets(TypedDict):
@@ -263,14 +263,14 @@ class App:
         entry_find = self.app_widgets['entry_find']
         entry_replace = self.app_widgets['entry_replace']
         enable = bool(intvar_replace.get())
-        toggle_widget_state(entry_find, enable)
-        toggle_widget_state(entry_replace, enable)
+        widget_utils.toggle_widget_state(entry_find, enable)
+        widget_utils.toggle_widget_state(entry_replace, enable)
 
     def config_suffix(self):
         intvar_suffix = self.app_widgets['intvar_suffix']
         entry_suffix = self.app_widgets['entry_suffix']
         enable = bool(intvar_suffix.get())
-        toggle_widget_state(entry_suffix, enable)
+        widget_utils.toggle_widget_state(entry_suffix, enable)
 
     def config_order(self):
         intvar_make_order = self.app_widgets['intvar_make_order']
@@ -280,11 +280,11 @@ class App:
         button_up = self.app_widgets['button_up']
         button_down = self.app_widgets['button_down']
         enable = bool(intvar_make_order.get())
-        toggle_widget_state(radiobutton_prefix_1, enable)
-        toggle_widget_state(radiobutton_prefix_2, enable)
-        toggle_widget_state(radiobutton_prefix_3, enable)
-        toggle_widget_state(button_up, enable)
-        toggle_widget_state(button_down, enable)
+        widget_utils.toggle_widget_state(radiobutton_prefix_1, enable)
+        widget_utils.toggle_widget_state(radiobutton_prefix_2, enable)
+        widget_utils.toggle_widget_state(radiobutton_prefix_3, enable)
+        widget_utils.toggle_widget_state(button_up, enable)
+        widget_utils.toggle_widget_state(button_down, enable)
 
     def move_name(self, inc: int):
         listbox_read = self.app_widgets['listbox_read']
@@ -328,12 +328,12 @@ class App:
         intvar_sep = self.app_widgets['intvar_sep']
         names = list(listbox_read.get(0, tk.END))
         if intvar_replace.get():
-            names = replace_names(names, entry_find.get(), entry_replace.get())
+            names = stringlist_utils.replace_names(names, entry_find.get(), entry_replace.get())
         if intvar_suffix.get():
-            names = add_suffix(names, entry_suffix.get())
+            names = stringlist_utils.add_suffix(names, entry_suffix.get())
         if intvar_make_order.get():
             separator = {1: '_', 2: '-', 3: ' '}[intvar_sep.get()]
-            names = reorder_names(names, separator)
+            names = stringlist_utils.reorder_names(names, separator)
         self.update_listbox_content(listbox_preview, names)
         self.highlight_duplicates(listbox_preview, names)
 
