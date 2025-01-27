@@ -92,24 +92,21 @@ class App:
 
     def create_label_frame_target_directory(self):
         labelframe = self.create_label_frame(self.root, 0, 0, 'Choose the directory')
-        frame_up = self.create_frame(labelframe, 0, 0)
-        frame_dw = self.create_frame(labelframe, 1, 0)
-        frame_right = self.create_frame(labelframe, 0, 1, 2)
         labelframe.columnconfigure(0, weight=1)
+        frame_up = self.create_frame(labelframe, 0, 0)
         frame_up.rowconfigure(0, weight=1)
         frame_up.columnconfigure(0, weight=1)
-
         strvar_tgtdir = tk.StringVar()
-        entry_tgtdir = self.create_entry(frame_up, 0, 0, 50, strvar_tgtdir)
-
-        label_applyto = self.create_label(frame_dw, 0, 0, 'Apply to:')
+        self.create_entry(frame_up, 0, 0, 50, strvar_tgtdir)
+        frame_dw = self.create_frame(labelframe, 1, 0)
+        self.create_label(frame_dw, 0, 0, 'Apply to:')
         intvar_applyto = tk.IntVar()
-        radiobutton_file = self.create_radiobutton(frame_dw, 0, 1, 'Files', intvar_applyto, 1)
-        radiobutton_file = self.create_radiobutton(frame_dw, 0, 2, 'Folders', intvar_applyto, 2)
+        self.create_radiobutton(frame_dw, 0, 1, 'Files', intvar_applyto, 1)
+        self.create_radiobutton(frame_dw, 0, 2, 'Folders', intvar_applyto, 2)
         intvar_applyto.set(1)
-
-        button_choose = self.create_button(frame_right, 0, 0, 'Choose', lambda: logic.choose_target_directory(self.logic_widgets))
-        button_read = self.create_button(frame_right, 1, 0, 'Read', lambda: logic.load_target_names(self.logic_widgets))
+        frame_right = self.create_frame(labelframe, 0, 1, 2)
+        self.create_button(frame_right, 0, 0, 'Choose', lambda: logic.choose_target_directory(self.logic_widgets))
+        self.create_button(frame_right, 1, 0, 'Read', lambda: logic.load_target_names(self.logic_widgets))
 
         self.logic_widgets['strvar_tgtdir'] = strvar_tgtdir
         self.logic_widgets['intvar_applyto'] = intvar_applyto
@@ -117,31 +114,24 @@ class App:
     def create_label_frame_renaming_method(self):
         labelframe = self.create_label_frame(self.root, 1, 0, 'Renaming method')
         frame_up = self.create_frame(labelframe, 0, 0)
-        frame_mid = self.create_frame(labelframe, 1, 0)
-        frame_dw = self.create_frame(labelframe, 2, 0)
-
         intvar_replace = tk.IntVar()
-        checkbutton_replace = self.create_checkbutton(frame_up, 0, 0, 'Replace text', lambda: logic.config_replace(self.logic_widgets), intvar_replace)
-
-        label_find = self.create_label(frame_up, 0, 1, 'Find:')
+        self.create_checkbutton(frame_up, 0, 0, 'Replace text', lambda: logic.config_replace(self.logic_widgets), intvar_replace)
+        self.create_label(frame_up, 0, 1, 'Find:')
         entry_find = self.create_entry(frame_up, 0, 2)
         entry_find.config(state='disabled')
-
-        label_replace = self.create_label(frame_up, 0, 3, 'Replace:')
+        self.create_label(frame_up, 0, 3, 'Replace:')
         entry_replace = self.create_entry(frame_up, 0, 4)
         entry_replace.config(state='disabled')
-
+        frame_mid = self.create_frame(labelframe, 1, 0)
         intvar_suffix = tk.IntVar()
-        checkbutton_suffix = self.create_checkbutton(frame_mid, 0, 0, 'Add suffix', lambda: logic.config_suffix(self.logic_widgets), intvar_suffix)
-
-        label_suffix = self.create_label(frame_mid, 0, 1, 'Suffix:')
+        self.create_checkbutton(frame_mid, 0, 0, 'Add suffix', lambda: logic.config_suffix(self.logic_widgets), intvar_suffix)
+        self.create_label(frame_mid, 0, 1, 'Suffix:')
         entry_suffix = self.create_entry(frame_mid, 0, 2)
         entry_suffix.config(state='disabled')
-
+        frame_dw = self.create_frame(labelframe, 2, 0)
         intvar_make_order = tk.IntVar()
-        checkbutton_order = self.create_checkbutton(frame_dw, 1, 0, 'Make an order', lambda: logic.config_order(self.logic_widgets), intvar_make_order)
-
-        label_sep = self.create_label(frame_dw, 1, 1, 'Sep:')
+        self.create_checkbutton(frame_dw, 1, 0, 'Make an order', lambda: logic.config_order(self.logic_widgets), intvar_make_order)
+        self.create_label(frame_dw, 1, 1, 'Sep:')
         intvar_sep = tk.IntVar()
         radiobutton_prefix_1 = self.create_radiobutton(frame_dw, 1, 2, '_', intvar_sep, 1)
         radiobutton_prefix_2 = self.create_radiobutton(frame_dw, 1, 3, '-', intvar_sep, 2)
@@ -164,18 +154,16 @@ class App:
 
     def create_label_frame_name_list(self):
         labelframe = self.create_label_frame(self.root, 2, 0, 'Name list')
-
         listbox_read = self.create_listbox_with_scrollbar(labelframe, 0, 0)
+        listbox_preview = self.create_listbox_with_scrollbar(labelframe, 0, 2)
         frame_bottomleft = self.create_frame(labelframe, 2, 0, columnspan=2, sticky=False)
         button_up = self.create_button(frame_bottomleft, 0, 1, 'Up', lambda: logic.move_name(self.logic_widgets, -1))
         button_down = self.create_button(frame_bottomleft, 0, 2, 'Down', lambda: logic.move_name(self.logic_widgets, 1))
         button_up['state'] = tk.DISABLED
         button_down['state'] = tk.DISABLED
-
-        listbox_preview = self.create_listbox_with_scrollbar(labelframe, 0, 2)
         frame_bottomright = self.create_frame(labelframe, 2, 2, columnspan=2, sticky=False)
-        button_preview = self.create_button(frame_bottomright, 0, 1, 'Preview', lambda: logic.preview_names(self.logic_widgets))
-        button_run = self.create_button(frame_bottomright, 0, 2, 'Run', lambda: logic.run_rename(self.logic_widgets))
+        self.create_button(frame_bottomright, 0, 1, 'Preview', lambda: logic.preview_names(self.logic_widgets))
+        self.create_button(frame_bottomright, 0, 2, 'Run', lambda: logic.run_rename(self.logic_widgets))
 
         self.logic_widgets['listbox_read'] = listbox_read
         self.logic_widgets['listbox_preview'] = listbox_preview
