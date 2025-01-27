@@ -117,7 +117,8 @@ def preview_names(logic_widgets: LogicWidgets):
         separator = {1: '_', 2: '-', 3: ' '}[intvar_sep.get()]
         names = stringlist_utils.reorder_names(names, separator)
     widget_utils.update_listbox_content(listbox_preview, names)
-    widget_utils.highlight_duplicates(listbox_preview, names)
+    idxs_duplicate = stringlist_utils.get_duplicate_indices(names)
+    widget_utils.highlight_duplicates(listbox_preview, idxs_duplicate)
 
 
 def run_rename(logic_widgets: LogicWidgets):
@@ -127,9 +128,9 @@ def run_rename(logic_widgets: LogicWidgets):
     tgt_dir_name = strvar_tgtdir.get()
     names_src = list(listbox_read.get(0, tk.END))
     names_dst = list(listbox_preview.get(0, tk.END))
-    name_repeated = widget_utils.highlight_duplicates(listbox_preview, names_dst)
+    idxs_duplicate = stringlist_utils.get_duplicate_indices(names_dst)
     try:
-        if name_repeated:
+        if idxs_duplicate:
             raise Exception('There are repeated names after renaming.')
         else:
             for name_src, name_dst in zip(names_src, names_dst):

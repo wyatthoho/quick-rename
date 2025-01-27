@@ -30,3 +30,11 @@ def reorder_names(names: list, separator: str) -> list[str]:
         f'{idx:0{decimal}d}{separator}{name}'
         for idx, name in enumerate(names)
     ]
+
+
+def get_duplicate_indices(names: list) -> list[int]:
+    for idx1, name1 in enumerate(names):
+        for idx2, name2 in enumerate(names[idx1+1:]):
+            if name2 == name1:
+                return [idx1, idx1 + idx2 + 1]
+    return []
