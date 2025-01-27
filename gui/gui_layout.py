@@ -1,30 +1,7 @@
-import os
 import tkinter as tk
-from tkinter import filedialog
 from tkinter import font
-from typing import TypedDict
 
-import utils.stringlist_utils as stringlist_utils
-import utils.widget_utils as widget_utils
-
-
-class AppWidgets(TypedDict):
-    strvar_tgtdir: tk.StringVar
-    intvar_applyto: tk.IntVar
-    intvar_replace: tk.IntVar
-    entry_find: tk.Entry
-    entry_replace: tk.Entry
-    intvar_suffix: tk.IntVar
-    entry_suffix: tk.Entry
-    intvar_make_order: tk.IntVar
-    intvar_sep: tk.IntVar
-    listbox_read: tk.Listbox
-    listbox_preview: tk.Listbox
-    radiobutton_prefix_1: tk.Radiobutton
-    radiobutton_prefix_2: tk.Radiobutton
-    radiobutton_prefix_3: tk.Radiobutton
-    button_up: tk.Button
-    button_down: tk.Button
+import logic.logic as logic
 
 
 class App:
@@ -41,14 +18,12 @@ class App:
     def __init__(self):
         self.root = self.initialize_main_window()
         self.font = font.Font(family=App.FONT_FAMILY, size=App.FONT_SIZE)
-        self.app_widgets = AppWidgets()
-        self.name_repeated = False
+        self.logic_widgets = logic.LogicWidgets()
         self.create_frame_target_directory()
         self.create_frame_renaming_method()
         self.create_frame_name_list()
         self.root.mainloop()
 
-    # typesetting
     def initialize_main_window(self):
         root = tk.Tk()
         root.title(App.NAME)
@@ -60,7 +35,7 @@ class App:
         root.state('zoomed')
         root.minsize(**App.ROOT_MINSIZE)
         return root
-    
+
     def create_frame_target_directory(self):
         frame = tk.LabelFrame(self.root, text='Choose the directory')
         frame.grid(row=0, column=0, sticky=tk.NSEW, **App.PADS, **App.IPADS)
@@ -93,17 +68,16 @@ class App:
         radiobutton_folder.grid(row=0, column=2)
         intvar_applyto.set(1)
 
-        button_choose = tk.Button(frame_right, text='Choose', command=self.choose_target_directory, width=App.BUTTON_WIDTH)
+        button_choose = tk.Button(frame_right, text='Choose', command=lambda: self.choose_target_directory(), width=App.BUTTON_WIDTH)
         button_choose.grid(row=0, column=0, sticky=tk.E, **App.PADS, **App.IPADS)
         button_choose['font'] = self.font
 
-        button_read = tk.Button(frame_right, text='Read', command=self.load_target_names, width=App.BUTTON_WIDTH)
+        button_read = tk.Button(frame_right, text='Read', command=lambda: self.load_target_names(), width=App.BUTTON_WIDTH)
         button_read.grid(row=1, column=0, **App.PADS, **App.IPADS)
         button_read['font'] = self.font
 
-        self.app_widgets['strvar_tgtdir'] = strvar_tgtdir
-        self.app_widgets['intvar_applyto'] = intvar_applyto
-
+        self.logic_widgets['strvar_tgtdir'] = strvar_tgtdir
+        self.logic_widgets['intvar_applyto'] = intvar_applyto
 
     def create_frame_renaming_method(self):
         frame = tk.LabelFrame(self.root, text='Renaming method')
@@ -120,7 +94,7 @@ class App:
         frame_dw.grid(row=2, column=0, sticky=tk.NSEW)
 
         intvar_replace = tk.IntVar()
-        checkbutton_replace = tk.Checkbutton(frame_up, text='Replace text', command=self.config_replace, variable=intvar_replace, onvalue=1, offvalue=0)
+        checkbutton_replace = tk.Checkbutton(frame_up, text='Replace text', command=lambda: self.config_replace(), variable=intvar_replace, onvalue=1, offvalue=0)
         checkbutton_replace.grid(row=0, column=0, **App.PADS)
 
         label_find = tk.Label(frame_up, text='Find:')
@@ -169,16 +143,16 @@ class App:
         radiobutton_prefix_3.config(state='disabled')
         intvar_sep.set(1)
 
-        self.app_widgets['intvar_replace'] = intvar_replace
-        self.app_widgets['entry_find'] = entry_find
-        self.app_widgets['entry_replace'] = entry_replace
-        self.app_widgets['intvar_suffix'] = intvar_suffix
-        self.app_widgets['entry_suffix'] = entry_suffix
-        self.app_widgets['intvar_make_order'] = intvar_make_order
-        self.app_widgets['intvar_sep'] = intvar_sep
-        self.app_widgets['radiobutton_prefix_1'] = radiobutton_prefix_1
-        self.app_widgets['radiobutton_prefix_2'] = radiobutton_prefix_2
-        self.app_widgets['radiobutton_prefix_3'] = radiobutton_prefix_3
+        self.logic_widgets['intvar_replace'] = intvar_replace
+        self.logic_widgets['entry_find'] = entry_find
+        self.logic_widgets['entry_replace'] = entry_replace
+        self.logic_widgets['intvar_suffix'] = intvar_suffix
+        self.logic_widgets['entry_suffix'] = entry_suffix
+        self.logic_widgets['intvar_make_order'] = intvar_make_order
+        self.logic_widgets['intvar_sep'] = intvar_sep
+        self.logic_widgets['radiobutton_prefix_1'] = radiobutton_prefix_1
+        self.logic_widgets['radiobutton_prefix_2'] = radiobutton_prefix_2
+        self.logic_widgets['radiobutton_prefix_3'] = radiobutton_prefix_3
 
     def create_frame_name_list(self):
         frame = tk.LabelFrame(self.root, text='Name list')
@@ -230,128 +204,31 @@ class App:
         button_run.grid(row=0, column=2, **App.PADS, **App.IPADS)
         button_run['font'] = self.font
 
-        self.app_widgets['listbox_read'] = listbox_read
-        self.app_widgets['listbox_preview'] = listbox_preview
-        self.app_widgets['button_up'] = button_up
-        self.app_widgets['button_down'] = button_down
+        self.logic_widgets['listbox_read'] = listbox_read
+        self.logic_widgets['listbox_preview'] = listbox_preview
+        self.logic_widgets['button_up'] = button_up
+        self.logic_widgets['button_down'] = button_down
 
-    # actions
     def choose_target_directory(self):
-        strvar_tgtdir = self.app_widgets['strvar_tgtdir']
-        dir_name = filedialog.askdirectory(title='Choose the directory')
-        strvar_tgtdir.set(dir_name)
+        logic.choose_target_directory(self.logic_widgets)
 
     def load_target_names(self):
-        strvar_tgtdir = self.app_widgets['strvar_tgtdir']
-        intvar_applyto = self.app_widgets['intvar_applyto']
-        listbox_read = self.app_widgets['listbox_read']
-        tgtdir = strvar_tgtdir.get()
-        tgtnames = os.listdir(tgtdir)
-        if intvar_applyto.get() == 1:
-            names = [name for name in tgtnames if os.path.isfile(os.path.join(tgtdir, name))]
-        else:
-            names = [name for name in tgtnames if not os.path.isfile(os.path.join(tgtdir, name))]
-        widget_utils.update_listbox_content(listbox_read, names)
+        logic.load_target_names(self.logic_widgets)
 
     def config_replace(self):
-        intvar_replace = self.app_widgets['intvar_replace']
-        entry_find = self.app_widgets['entry_find']
-        entry_replace = self.app_widgets['entry_replace']
-        enable = bool(intvar_replace.get())
-        widget_utils.toggle_widget_state(entry_find, enable)
-        widget_utils.toggle_widget_state(entry_replace, enable)
+        logic.config_replace(self.logic_widgets)
 
     def config_suffix(self):
-        intvar_suffix = self.app_widgets['intvar_suffix']
-        entry_suffix = self.app_widgets['entry_suffix']
-        enable = bool(intvar_suffix.get())
-        widget_utils.toggle_widget_state(entry_suffix, enable)
+        logic.config_suffix(self.logic_widgets)
 
     def config_order(self):
-        intvar_make_order = self.app_widgets['intvar_make_order']
-        radiobutton_prefix_1 = self.app_widgets['radiobutton_prefix_1']
-        radiobutton_prefix_2 = self.app_widgets['radiobutton_prefix_2']
-        radiobutton_prefix_3 = self.app_widgets['radiobutton_prefix_3']
-        button_up = self.app_widgets['button_up']
-        button_down = self.app_widgets['button_down']
-        enable = bool(intvar_make_order.get())
-        widget_utils.toggle_widget_state(radiobutton_prefix_1, enable)
-        widget_utils.toggle_widget_state(radiobutton_prefix_2, enable)
-        widget_utils.toggle_widget_state(radiobutton_prefix_3, enable)
-        widget_utils.toggle_widget_state(button_up, enable)
-        widget_utils.toggle_widget_state(button_down, enable)
+        logic.config_order(self.logic_widgets)
 
     def move_name(self, inc: int):
-        listbox_read = self.app_widgets['listbox_read']
-        moved = False
-        names = list(listbox_read.get(0, tk.END))
-        names_dict = {idx: name for idx, name in enumerate(names)}
-        if inc < 0:
-            id_boundary = 0
-        else:
-            id_boundary = len(names_dict) - 1
-        id_sel = listbox_read.curselection()[0]
-        if abs(id_sel - id_boundary) > 0:
-            id_next = id_sel + inc
-            names_dict[id_sel], names_dict[id_next] = names_dict[id_next], names_dict[id_sel]
-            moved = True
-        if moved:
-            keys = list(names_dict.keys())
-            keys.sort()
-            names = [names_dict[key] for key in keys]
-            widget_utils.update_listbox_content(listbox_read, names)
-            listbox_read.select_set(id_next)
-
-    def highlight_duplicates(self, listbox: tk.Listbox, names: list):
-        self.name_repeated = False
-        for idx1, name1 in enumerate(names):
-            for idx2, name2 in enumerate(names[idx1+1:]):
-                if name2 == name1:
-                    self.name_repeated = True
-                    listbox.itemconfig(idx1, {'bg': 'red'})
-                    listbox.itemconfig(idx1+idx2+1, {'bg': 'red'})
+        logic.move_name(self.logic_widgets, inc)
 
     def preview_names(self):
-        listbox_read = self.app_widgets['listbox_read']
-        listbox_preview = self.app_widgets['listbox_preview']
-        intvar_replace = self.app_widgets['intvar_replace']
-        intvar_suffix = self.app_widgets['intvar_suffix']
-        intvar_make_order = self.app_widgets['intvar_make_order']
-        entry_find = self.app_widgets['entry_find']
-        entry_replace = self.app_widgets['entry_replace']
-        entry_suffix = self.app_widgets['entry_suffix']
-        intvar_sep = self.app_widgets['intvar_sep']
-        names = list(listbox_read.get(0, tk.END))
-        if intvar_replace.get():
-            names = stringlist_utils.replace_names(names, entry_find.get(), entry_replace.get())
-        if intvar_suffix.get():
-            names = stringlist_utils.add_suffix(names, entry_suffix.get())
-        if intvar_make_order.get():
-            separator = {1: '_', 2: '-', 3: ' '}[intvar_sep.get()]
-            names = stringlist_utils.reorder_names(names, separator)
-        widget_utils.update_listbox_content(listbox_preview, names)
-        self.highlight_duplicates(listbox_preview, names)
+        logic.preview_names(self.logic_widgets)
 
     def run_rename(self):
-        strvar_tgtdir = self.app_widgets['strvar_tgtdir']
-        listbox_read = self.app_widgets['listbox_read']
-        listbox_preview = self.app_widgets['listbox_preview']
-        tgt_dir_name = strvar_tgtdir.get()
-        names_src = list(listbox_read.get(0, tk.END))
-        names_dst = list(listbox_preview.get(0, tk.END))
-        try:
-            if self.name_repeated:
-                raise Exception('There are repeated names after renaming.')
-            else:
-                for name_src, name_dst in zip(names_src, names_dst):
-                    path_src = os.path.join(tgt_dir_name, name_src)
-                    path_dst = os.path.join(tgt_dir_name, name_dst)
-                    os.rename(src=path_src, dst=path_dst)
-        except Exception as e:
-            tk.messagebox.showerror('Error', e.args[0])
-            listbox_preview.delete(0, tk.END)
-        else:
-            tk.messagebox.showinfo('Message', 'Renamed successfully.')
-            listbox_read.delete(0, tk.END)
-            listbox_preview.delete(0, tk.END)
-
+        logic.run_rename(self.logic_widgets)
