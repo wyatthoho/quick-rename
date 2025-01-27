@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import font
+from collections.abc import Callable
 
 import logic.logic as logic
 
@@ -14,14 +15,15 @@ class App:
     IPADS = {'ipadx': 1, 'ipady': 1}
     BUTTON_WIDTH = 6
     ENTRY_WIDTH = 30
+    STICKY_FRAME = tk.NSEW
 
     def __init__(self):
         self.root = self.initialize_main_window()
         self.font = font.Font(family=App.FONT_FAMILY, size=App.FONT_SIZE)
         self.logic_widgets = logic.LogicWidgets()
-        self.create_frame_target_directory()
-        self.create_frame_renaming_method()
-        self.create_frame_name_list()
+        self.create_label_frame_target_directory()
+        self.create_label_frame_renaming_method()
+        self.create_label_frame_name_list()
         self.root.mainloop()
 
     def initialize_main_window(self):
@@ -36,22 +38,46 @@ class App:
         root.minsize(**App.ROOT_MINSIZE)
         return root
 
-    def create_frame_target_directory(self):
-        frame = tk.LabelFrame(self.root, text='Choose the directory')
-        frame.grid(row=0, column=0, sticky=tk.NSEW, **App.PADS, **App.IPADS)
-        frame.columnconfigure(0, weight=1)
-        frame['font'] = self.font
+    def create_label_frame(self, master: tk.Tk, row: int, col: int, text: str) -> tk.LabelFrame:
+        labelframe = tk.LabelFrame(master, text=text)
+        labelframe.grid(row=row, column=col, sticky=App.STICKY_FRAME, **App.PADS, **App.IPADS)
+        labelframe['font'] = self.font
+        return labelframe
 
-        frame_up = tk.Frame(frame)
-        frame_up.grid(row=0, column=0, sticky=tk.NSEW)
+    def create_frame(self, master: tk.LabelFrame, row: int, col: int, rowspan: int = 1, columnspan: int = 1, sticky: bool = True) -> tk.Frame:
+        frame = tk.Frame(master)
+        frame.grid(row=row, column=col, rowspan=rowspan, columnspan=columnspan, sticky=App.STICKY_FRAME if sticky else None, **App.PADS, **App.IPADS)
+        return frame
+
+    def create_button(self, master: tk.Frame, row: int, column: int, text: str, command: Callable) -> tk.Button:
+        button = tk.Button(master, text=text, command=command, width=App.BUTTON_WIDTH)
+        button.grid(row=row, column=column, **App.PADS, **App.IPADS, sticky=tk.E)
+        button['font'] = self.font
+        return button
+
+    def create_listbox_with_scrollbar(self, master: tk.LabelFrame, row: int, col: int) -> tk.Listbox:
+        master.rowconfigure(row, weight=1)
+        master.rowconfigure(row+1, weight=0)
+        master.columnconfigure(col, weight=1)
+        master.columnconfigure(col+1, weight=0)
+        scrollbar_x = tk.Scrollbar(master, orient=tk.HORIZONTAL)
+        scrollbar_y = tk.Scrollbar(master, orient=tk.VERTICAL)
+        scrollbar_x.grid(row=row+1, column=0, sticky=tk.EW)
+        scrollbar_y.grid(row=0, column=col+1, sticky=tk.NS)
+        listbox = tk.Listbox(master, xscrollcommand=scrollbar_x.set, yscrollcommand=scrollbar_y.set)
+        listbox.grid(row=row, column=col, sticky=tk.NSEW, **App.PADS)
+        scrollbar_x.config(command=listbox.xview)
+        scrollbar_y.config(command=listbox.yview)
+        return listbox
+
+    def create_label_frame_target_directory(self):
+        labelframe = self.create_label_frame(self.root, 0, 0, 'Choose the directory')
+        frame_up = self.create_frame(labelframe, 0, 0)
+        frame_dw = self.create_frame(labelframe, 1, 0)
+        frame_right = self.create_frame(labelframe, 0, 1, 2)
+        labelframe.columnconfigure(0, weight=1)
         frame_up.rowconfigure(0, weight=1)
         frame_up.columnconfigure(0, weight=1)
-
-        frame_dw = tk.Frame(frame)
-        frame_dw.grid(row=1, column=0, sticky=tk.NSEW)
-
-        frame_right = tk.Frame(frame)
-        frame_right.grid(row=0, column=1, rowspan=2, sticky=tk.NSEW)
 
         strvar_tgtdir = tk.StringVar()
         entry_tgtdir = tk.Entry(frame_up, width=50, textvariable=strvar_tgtdir)
@@ -68,30 +94,17 @@ class App:
         radiobutton_folder.grid(row=0, column=2)
         intvar_applyto.set(1)
 
-        button_choose = tk.Button(frame_right, text='Choose', command=lambda: logic.choose_target_directory(self.logic_widgets), width=App.BUTTON_WIDTH)
-        button_choose.grid(row=0, column=0, sticky=tk.E, **App.PADS, **App.IPADS)
-        button_choose['font'] = self.font
-
-        button_read = tk.Button(frame_right, text='Read', command=lambda: logic.load_target_names(self.logic_widgets), width=App.BUTTON_WIDTH)
-        button_read.grid(row=1, column=0, **App.PADS, **App.IPADS)
-        button_read['font'] = self.font
+        button_choose = self.create_button(frame_right, 0, 0, 'Chooose', lambda: logic.choose_target_directory(self.logic_widgets))
+        button_read = self.create_button(frame_right, 1, 0, 'Read', lambda: logic.load_target_names(self.logic_widgets))
 
         self.logic_widgets['strvar_tgtdir'] = strvar_tgtdir
         self.logic_widgets['intvar_applyto'] = intvar_applyto
 
-    def create_frame_renaming_method(self):
-        frame = tk.LabelFrame(self.root, text='Renaming method')
-        frame.grid(row=1, column=0, sticky=tk.NSEW, **App.PADS, **App.IPADS)
-        frame['font'] = self.font
-
-        frame_up = tk.Frame(frame)
-        frame_up.grid(row=0, column=0, sticky=tk.NSEW)
-
-        frame_mid = tk.Frame(frame)
-        frame_mid.grid(row=1, column=0, sticky=tk.NSEW)
-
-        frame_dw = tk.Frame(frame)
-        frame_dw.grid(row=2, column=0, sticky=tk.NSEW)
+    def create_label_frame_renaming_method(self):
+        labelframe = self.create_label_frame(self.root, 1, 0, 'Renaming method')
+        frame_up = self.create_frame(labelframe, 0, 0)
+        frame_mid = self.create_frame(labelframe, 1, 0)
+        frame_dw = self.create_frame(labelframe, 2, 0)
 
         intvar_replace = tk.IntVar()
         checkbutton_replace = tk.Checkbutton(frame_up, text='Replace text', command=lambda: logic.config_replace(self.logic_widgets), variable=intvar_replace, onvalue=1, offvalue=0)
@@ -154,55 +167,20 @@ class App:
         self.logic_widgets['radiobutton_prefix_2'] = radiobutton_prefix_2
         self.logic_widgets['radiobutton_prefix_3'] = radiobutton_prefix_3
 
-    def create_frame_name_list(self):
-        frame = tk.LabelFrame(self.root, text='Name list')
-        frame.grid(row=2, column=0, sticky=tk.NSEW, **App.PADS, **App.IPADS)
-        frame.rowconfigure(0, weight=1)
-        frame.rowconfigure(1, weight=0)
-        frame.rowconfigure(2, weight=0)
-        frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=0)
-        frame.columnconfigure(2, weight=1)
-        frame.columnconfigure(3, weight=0)
-        frame['font'] = self.font
-
-        scrollbar_read_x = tk.Scrollbar(frame, orient=tk.HORIZONTAL)
-        scrollbar_read_y = tk.Scrollbar(frame, orient=tk.VERTICAL)
-        scrollbar_read_x.grid(row=1, column=0, sticky=tk.EW)
-        scrollbar_read_y.grid(row=0, column=1, sticky=tk.NS)
-        listbox_read = tk.Listbox(frame, width=22, xscrollcommand=scrollbar_read_x.set, yscrollcommand=scrollbar_read_y.set)
-        listbox_read.grid(row=0, column=0, sticky=tk.NSEW, **App.PADS)
-        scrollbar_read_x.config(command=listbox_read.xview)
-        scrollbar_read_y.config(command=listbox_read.yview)
-
-        scrollbar_preview_x = tk.Scrollbar(frame, orient=tk.HORIZONTAL)
-        scrollbar_preview_y = tk.Scrollbar(frame, orient=tk.VERTICAL)
-        scrollbar_preview_x.grid(row=1, column=2, sticky=tk.EW)
-        scrollbar_preview_y.grid(row=0, column=3, sticky=tk.NS)
-        listbox_preview = tk.Listbox(frame, width=22, xscrollcommand=scrollbar_preview_x.set, yscrollcommand=scrollbar_preview_y.set)
-        listbox_preview.grid(row=0, column=2, sticky=tk.NSEW, **App.PADS)
-        scrollbar_preview_x.config(command=listbox_preview.xview)
-        scrollbar_preview_y.config(command=listbox_preview.yview)
-
-        frame_bottomleft = tk.Frame(frame)
-        frame_bottomleft.grid(row=2, column=0, columnspan=2)
-        button_up = tk.Button(frame_bottomleft, text='Up', command=lambda: logic.move_name(self.logic_widgets, -1), width=App.BUTTON_WIDTH)
-        button_up.grid(row=0, column=1, **App.PADS, **App.IPADS)
-        button_up['font'] = self.font
+    def create_label_frame_name_list(self):
+        labelframe = self.create_label_frame(self.root, 2, 0, 'Name list')
+        
+        listbox_read = self.create_listbox_with_scrollbar(labelframe, 0, 0)
+        frame_bottomleft = self.create_frame(labelframe, 2, 0, columnspan=2, sticky=False)
+        button_up = self.create_button(frame_bottomleft, 0, 1, 'Up', lambda: logic.move_name(self.logic_widgets, -1))
+        button_down = self.create_button(frame_bottomleft, 0, 2, 'Down', lambda: logic.move_name(self.logic_widgets, 1))
         button_up['state'] = tk.DISABLED
-        button_down = tk.Button(frame_bottomleft, text='Down', command=lambda: logic.move_name(self.logic_widgets, 1), width=App.BUTTON_WIDTH)
-        button_down.grid(row=0, column=2, **App.PADS, **App.IPADS)
-        button_down['font'] = self.font
         button_down['state'] = tk.DISABLED
 
-        frame_bottomright = tk.Frame(frame)
-        frame_bottomright.grid(row=2, column=2, columnspan=2)
-        button_preview = tk.Button(frame_bottomright, text='Preview', command=lambda: logic.preview_names(self.logic_widgets), width=App.BUTTON_WIDTH)
-        button_preview.grid(row=0, column=1, **App.PADS, **App.IPADS)
-        button_preview['font'] = self.font
-        button_run = tk.Button(frame_bottomright, text='Run', command=lambda: logic.run_rename(self.logic_widgets), width=App.BUTTON_WIDTH)
-        button_run.grid(row=0, column=2, **App.PADS, **App.IPADS)
-        button_run['font'] = self.font
+        listbox_preview = self.create_listbox_with_scrollbar(labelframe, 0, 2)
+        frame_bottomright = self.create_frame(labelframe, 2, 2, columnspan=2, sticky=False)
+        button_preview = self.create_button(frame_bottomright, 0, 1, 'Preview', lambda: logic.preview_names(self.logic_widgets))
+        button_run = self.create_button(frame_bottomright, 0, 2, 'Run', lambda: logic.run_rename(self.logic_widgets))
 
         self.logic_widgets['listbox_read'] = listbox_read
         self.logic_widgets['listbox_preview'] = listbox_preview
