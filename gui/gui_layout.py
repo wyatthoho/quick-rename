@@ -44,16 +44,36 @@ class App:
         labelframe['font'] = self.font
         return labelframe
 
+    def create_label(self, master: tk.Frame, row: int, col: int, text: str) -> tk.Label:
+        label = tk.Label(master, text=text)
+        label.grid(row=row, column=col, **App.PADS)
+        return label
+
     def create_frame(self, master: tk.LabelFrame, row: int, col: int, rowspan: int = 1, columnspan: int = 1, sticky: bool = True) -> tk.Frame:
         frame = tk.Frame(master)
         frame.grid(row=row, column=col, rowspan=rowspan, columnspan=columnspan, sticky=App.STICKY_FRAME if sticky else None, **App.PADS, **App.IPADS)
         return frame
 
+    def create_entry(self, master: tk.Frame, row: int, col: int, width: int = None, textvariable: tk.StringVar = None) -> tk.Entry:
+        entry = tk.Entry(master, width=width if width else App.ENTRY_WIDTH, textvariable=textvariable if textvariable else None)
+        entry.grid(row=row, column=col, sticky=App.STICKY_FRAME, **App.PADS)
+        return entry
+
     def create_button(self, master: tk.Frame, row: int, column: int, text: str, command: Callable) -> tk.Button:
         button = tk.Button(master, text=text, command=command, width=App.BUTTON_WIDTH)
-        button.grid(row=row, column=column, **App.PADS, **App.IPADS, sticky=tk.E)
+        button.grid(row=row, column=column, **App.PADS, **App.IPADS)
         button['font'] = self.font
         return button
+
+    def create_checkbutton(self, master: tk.Frame, row: int, column: int, text: str, command: Callable, variable: tk.IntVar) -> tk.Checkbutton:
+        checkbutton = tk.Checkbutton(master, text=text, command=command, variable=variable, onvalue=1, offvalue=0)
+        checkbutton.grid(row=row, column=column, **App.PADS)
+        return checkbutton
+
+    def create_radiobutton(self, master: tk.Frame, row: int, column: int, text: str, variable: tk.IntVar, value: int) -> tk.Radiobutton:
+        radiobutton = tk.Radiobutton(master, text=text, variable=variable, value=value)
+        radiobutton.grid(row=row, column=column, **App.PADS)
+        return radiobutton
 
     def create_listbox_with_scrollbar(self, master: tk.LabelFrame, row: int, col: int) -> tk.Listbox:
         master.rowconfigure(row, weight=1)
@@ -80,21 +100,15 @@ class App:
         frame_up.columnconfigure(0, weight=1)
 
         strvar_tgtdir = tk.StringVar()
-        entry_tgtdir = tk.Entry(frame_up, width=50, textvariable=strvar_tgtdir)
-        entry_tgtdir.grid(row=0, column=0, sticky=tk.NSEW, **App.PADS)
+        entry_tgtdir = self.create_entry(frame_up, 0, 0, 50, strvar_tgtdir)
 
-        label_applyto = tk.Label(frame_dw, text='Apply to:')
-        label_applyto.grid(row=0, column=0, **App.PADS)
-
+        label_applyto = self.create_label(frame_dw, 0, 0, 'Apply to:')
         intvar_applyto = tk.IntVar()
-        radiobutoon_file = tk.Radiobutton(frame_dw, text='Files', variable=intvar_applyto, value=1)
-        radiobutoon_file.grid(row=0, column=1)
-
-        radiobutton_folder = tk.Radiobutton(frame_dw, text='Folders', variable=intvar_applyto, value=2)
-        radiobutton_folder.grid(row=0, column=2)
+        radiobutton_file = self.create_radiobutton(frame_dw, 0, 1, 'Files', intvar_applyto, 1)
+        radiobutton_file = self.create_radiobutton(frame_dw, 0, 2, 'Folders', intvar_applyto, 2)
         intvar_applyto.set(1)
 
-        button_choose = self.create_button(frame_right, 0, 0, 'Chooose', lambda: logic.choose_target_directory(self.logic_widgets))
+        button_choose = self.create_button(frame_right, 0, 0, 'Choose', lambda: logic.choose_target_directory(self.logic_widgets))
         button_read = self.create_button(frame_right, 1, 0, 'Read', lambda: logic.load_target_names(self.logic_widgets))
 
         self.logic_widgets['strvar_tgtdir'] = strvar_tgtdir
@@ -107,52 +121,33 @@ class App:
         frame_dw = self.create_frame(labelframe, 2, 0)
 
         intvar_replace = tk.IntVar()
-        checkbutton_replace = tk.Checkbutton(frame_up, text='Replace text', command=lambda: logic.config_replace(self.logic_widgets), variable=intvar_replace, onvalue=1, offvalue=0)
-        checkbutton_replace.grid(row=0, column=0, **App.PADS)
+        checkbutton_replace = self.create_checkbutton(frame_up, 0, 0, 'Replace text', lambda: logic.config_replace(self.logic_widgets), intvar_replace)
 
-        label_find = tk.Label(frame_up, text='Find:')
-        label_find.grid(row=0, column=1, **App.PADS)
-
-        entry_find = tk.Entry(frame_up, width=App.ENTRY_WIDTH)
-        entry_find.grid(row=0, column=2, **App.PADS)
+        label_find = self.create_label(frame_up, 0, 1, 'Find:')
+        entry_find = self.create_entry(frame_up, 0, 2)
         entry_find.config(state='disabled')
 
-        label_replace = tk.Label(frame_up, text='Replace:')
-        label_replace.grid(row=0, column=3, **App.PADS)
-
-        entry_replace = tk.Entry(frame_up, width=App.ENTRY_WIDTH)
-        entry_replace.grid(row=0, column=4, **App.PADS)
+        label_replace = self.create_label(frame_up, 0, 3, 'Replace:')
+        entry_replace = self.create_entry(frame_up, 0, 4)
         entry_replace.config(state='disabled')
 
         intvar_suffix = tk.IntVar()
-        checkbutton_suffix = tk.Checkbutton(frame_mid, text='Add suffix', command=lambda: logic.config_suffix(self.logic_widgets), variable=intvar_suffix, onvalue=1, offvalue=0)
-        checkbutton_suffix.grid(row=0, column=0, **App.PADS)
+        checkbutton_suffix = self.create_checkbutton(frame_mid, 0, 0, 'Add suffix', lambda: logic.config_suffix(self.logic_widgets), intvar_suffix)
 
-        label_suffix = tk.Label(frame_mid, text='Suffix:')
-        label_suffix.grid(row=0, column=1, **App.PADS)
-
-        entry_suffix = tk.Entry(frame_mid, width=App.ENTRY_WIDTH)
-        entry_suffix.grid(row=0, column=2, **App.PADS)
+        label_suffix = self.create_label(frame_mid, 0, 1, 'Suffix:')
+        entry_suffix = self.create_entry(frame_mid, 0, 2)
         entry_suffix.config(state='disabled')
 
         intvar_make_order = tk.IntVar()
-        checkbutton_order = tk.Checkbutton(frame_dw, text='Make an order', command=lambda: logic.config_order(self.logic_widgets), variable=intvar_make_order, onvalue=1, offvalue=0)
-        checkbutton_order.grid(row=1, column=0, **App.PADS)
+        checkbutton_order = self.create_checkbutton(frame_dw, 1, 0, 'Make an order', lambda: logic.config_order(self.logic_widgets), intvar_make_order)
 
-        label_sep = tk.Label(frame_dw, text='Sep:')
-        label_sep.grid(row=1, column=1, **App.PADS)
-
+        label_sep = self.create_label(frame_dw, 1, 1, 'Sep:')
         intvar_sep = tk.IntVar()
-        radiobutton_prefix_1 = tk.Radiobutton(frame_dw, text='_', variable=intvar_sep, value=1)
-        radiobutton_prefix_1.grid(row=1, column=2, **App.PADS)
+        radiobutton_prefix_1 = self.create_radiobutton(frame_dw, 1, 2, '_', intvar_sep, 1)
+        radiobutton_prefix_2 = self.create_radiobutton(frame_dw, 1, 3, '-', intvar_sep, 2)
+        radiobutton_prefix_3 = self.create_radiobutton(frame_dw, 1, 4, 'space', intvar_sep, 3)
         radiobutton_prefix_1.config(state='disabled')
-
-        radiobutton_prefix_2 = tk.Radiobutton(frame_dw, text='-', variable=intvar_sep, value=2)
-        radiobutton_prefix_2.grid(row=1, column=3, **App.PADS)
         radiobutton_prefix_2.config(state='disabled')
-
-        radiobutton_prefix_3 = tk.Radiobutton(frame_dw, text='space', variable=intvar_sep, value=3)
-        radiobutton_prefix_3.grid(row=1, column=4, **App.PADS)
         radiobutton_prefix_3.config(state='disabled')
         intvar_sep.set(1)
 
@@ -169,7 +164,7 @@ class App:
 
     def create_label_frame_name_list(self):
         labelframe = self.create_label_frame(self.root, 2, 0, 'Name list')
-        
+
         listbox_read = self.create_listbox_with_scrollbar(labelframe, 0, 0)
         frame_bottomleft = self.create_frame(labelframe, 2, 0, columnspan=2, sticky=False)
         button_up = self.create_button(frame_bottomleft, 0, 1, 'Up', lambda: logic.move_name(self.logic_widgets, -1))
