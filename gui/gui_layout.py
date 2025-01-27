@@ -68,11 +68,11 @@ class App:
         radiobutton_folder.grid(row=0, column=2)
         intvar_applyto.set(1)
 
-        button_choose = tk.Button(frame_right, text='Choose', command=lambda: self.choose_target_directory(), width=App.BUTTON_WIDTH)
+        button_choose = tk.Button(frame_right, text='Choose', command=lambda: logic.choose_target_directory(self.logic_widgets), width=App.BUTTON_WIDTH)
         button_choose.grid(row=0, column=0, sticky=tk.E, **App.PADS, **App.IPADS)
         button_choose['font'] = self.font
 
-        button_read = tk.Button(frame_right, text='Read', command=lambda: self.load_target_names(), width=App.BUTTON_WIDTH)
+        button_read = tk.Button(frame_right, text='Read', command=lambda: logic.load_target_names(self.logic_widgets), width=App.BUTTON_WIDTH)
         button_read.grid(row=1, column=0, **App.PADS, **App.IPADS)
         button_read['font'] = self.font
 
@@ -94,7 +94,7 @@ class App:
         frame_dw.grid(row=2, column=0, sticky=tk.NSEW)
 
         intvar_replace = tk.IntVar()
-        checkbutton_replace = tk.Checkbutton(frame_up, text='Replace text', command=lambda: self.config_replace(), variable=intvar_replace, onvalue=1, offvalue=0)
+        checkbutton_replace = tk.Checkbutton(frame_up, text='Replace text', command=lambda: logic.config_replace(self.logic_widgets), variable=intvar_replace, onvalue=1, offvalue=0)
         checkbutton_replace.grid(row=0, column=0, **App.PADS)
 
         label_find = tk.Label(frame_up, text='Find:')
@@ -112,7 +112,7 @@ class App:
         entry_replace.config(state='disabled')
 
         intvar_suffix = tk.IntVar()
-        checkbutton_suffix = tk.Checkbutton(frame_mid, text='Add suffix', command=self.config_suffix, variable=intvar_suffix, onvalue=1, offvalue=0)
+        checkbutton_suffix = tk.Checkbutton(frame_mid, text='Add suffix', command=lambda: logic.config_suffix(self.logic_widgets), variable=intvar_suffix, onvalue=1, offvalue=0)
         checkbutton_suffix.grid(row=0, column=0, **App.PADS)
 
         label_suffix = tk.Label(frame_mid, text='Suffix:')
@@ -123,7 +123,7 @@ class App:
         entry_suffix.config(state='disabled')
 
         intvar_make_order = tk.IntVar()
-        checkbutton_order = tk.Checkbutton(frame_dw, text='Make an order', command=self.config_order, variable=intvar_make_order, onvalue=1, offvalue=0)
+        checkbutton_order = tk.Checkbutton(frame_dw, text='Make an order', command=lambda: logic.config_order(self.logic_widgets), variable=intvar_make_order, onvalue=1, offvalue=0)
         checkbutton_order.grid(row=1, column=0, **App.PADS)
 
         label_sep = tk.Label(frame_dw, text='Sep:')
@@ -186,21 +186,21 @@ class App:
 
         frame_bottomleft = tk.Frame(frame)
         frame_bottomleft.grid(row=2, column=0, columnspan=2)
-        button_up = tk.Button(frame_bottomleft, text='Up', command=lambda: self.move_name(-1), width=App.BUTTON_WIDTH)
+        button_up = tk.Button(frame_bottomleft, text='Up', command=lambda: logic.move_name(self.logic_widgets, -1), width=App.BUTTON_WIDTH)
         button_up.grid(row=0, column=1, **App.PADS, **App.IPADS)
         button_up['font'] = self.font
         button_up['state'] = tk.DISABLED
-        button_down = tk.Button(frame_bottomleft, text='Down', command=lambda: self.move_name(1), width=App.BUTTON_WIDTH)
+        button_down = tk.Button(frame_bottomleft, text='Down', command=lambda: logic.move_name(self.logic_widgets, 1), width=App.BUTTON_WIDTH)
         button_down.grid(row=0, column=2, **App.PADS, **App.IPADS)
         button_down['font'] = self.font
         button_down['state'] = tk.DISABLED
 
         frame_bottomright = tk.Frame(frame)
         frame_bottomright.grid(row=2, column=2, columnspan=2)
-        button_preview = tk.Button(frame_bottomright, text='Preview', command=self.preview_names, width=App.BUTTON_WIDTH)
+        button_preview = tk.Button(frame_bottomright, text='Preview', command=lambda: logic.preview_names(self.logic_widgets), width=App.BUTTON_WIDTH)
         button_preview.grid(row=0, column=1, **App.PADS, **App.IPADS)
         button_preview['font'] = self.font
-        button_run = tk.Button(frame_bottomright, text='Run', command=self.run_rename, width=App.BUTTON_WIDTH)
+        button_run = tk.Button(frame_bottomright, text='Run', command=lambda: logic.run_rename(self.logic_widgets), width=App.BUTTON_WIDTH)
         button_run.grid(row=0, column=2, **App.PADS, **App.IPADS)
         button_run['font'] = self.font
 
@@ -208,27 +208,3 @@ class App:
         self.logic_widgets['listbox_preview'] = listbox_preview
         self.logic_widgets['button_up'] = button_up
         self.logic_widgets['button_down'] = button_down
-
-    def choose_target_directory(self):
-        logic.choose_target_directory(self.logic_widgets)
-
-    def load_target_names(self):
-        logic.load_target_names(self.logic_widgets)
-
-    def config_replace(self):
-        logic.config_replace(self.logic_widgets)
-
-    def config_suffix(self):
-        logic.config_suffix(self.logic_widgets)
-
-    def config_order(self):
-        logic.config_order(self.logic_widgets)
-
-    def move_name(self, inc: int):
-        logic.move_name(self.logic_widgets, inc)
-
-    def preview_names(self):
-        logic.preview_names(self.logic_widgets)
-
-    def run_rename(self):
-        logic.run_rename(self.logic_widgets)
