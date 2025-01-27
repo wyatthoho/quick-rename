@@ -12,6 +12,6 @@ def update_listbox_content(listbox: tk.Listbox, names: list):
         listbox.insert(idx, name)
 
 
-def highlight_duplicates(listbox: tk.Listbox, indices: list, bg_color: str = 'red') -> bool:
+def highlight_duplicates(listbox: tk.Listbox, indices: list, bg_color: str = 'red'):
     for idx in indices:
         listbox.itemconfig(idx, {'bg': bg_color})
