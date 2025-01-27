@@ -5,21 +5,22 @@ from collections.abc import Callable
 import logic.logic as logic
 
 
-class App:
-    NAME = 'QuickRename'
-    ROOT_MINSIZE = {'width': 680, 'height': 500}
-    LOGO_PATH = 'img\\favicon.ico'
-    FONT_FAMILY = 'Helvetica'
-    FONT_SIZE = 10
-    PADS = {'padx': 4, 'pady': 4}
-    IPADS = {'ipadx': 1, 'ipady': 1}
-    BUTTON_WIDTH = 6
-    ENTRY_WIDTH = 30
-    STICKY_FRAME = tk.NSEW
+NAME = 'QuickRename'
+ROOT_MINSIZE = {'width': 680, 'height': 500}
+LOGO_PATH = 'img\\favicon.ico'
+FONT_FAMILY = 'Helvetica'
+FONT_SIZE = 10
+PADS = {'padx': 4, 'pady': 4}
+IPADS = {'ipadx': 1, 'ipady': 1}
+BUTTON_WIDTH = 6
+ENTRY_WIDTH = 30
+STICKY = tk.NSEW
 
+
+class App:
     def __init__(self):
         self.root = self.initialize_main_window()
-        self.font = font.Font(family=App.FONT_FAMILY, size=App.FONT_SIZE)
+        self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
         self.logic_widgets = logic.LogicWidgets()
         self.create_label_frame_target_directory()
         self.create_label_frame_renaming_method()
@@ -28,51 +29,51 @@ class App:
 
     def initialize_main_window(self):
         root = tk.Tk()
-        root.title(App.NAME)
-        root.iconbitmap(App.LOGO_PATH)
+        root.title(NAME)
+        root.iconbitmap(LOGO_PATH)
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=0)
         root.rowconfigure(1, weight=0)
         root.rowconfigure(2, weight=1)
         root.state('zoomed')
-        root.minsize(**App.ROOT_MINSIZE)
+        root.minsize(**ROOT_MINSIZE)
         return root
 
     def create_label_frame(self, master: tk.Tk, row: int, col: int, text: str) -> tk.LabelFrame:
         labelframe = tk.LabelFrame(master, text=text)
-        labelframe.grid(row=row, column=col, sticky=App.STICKY_FRAME, **App.PADS, **App.IPADS)
+        labelframe.grid(row=row, column=col, sticky=STICKY, **PADS, **IPADS)
         labelframe['font'] = self.font
         return labelframe
 
     def create_label(self, master: tk.Frame, row: int, col: int, text: str) -> tk.Label:
         label = tk.Label(master, text=text)
-        label.grid(row=row, column=col, **App.PADS)
+        label.grid(row=row, column=col, **PADS)
         return label
 
     def create_frame(self, master: tk.LabelFrame, row: int, col: int, rowspan: int = 1, columnspan: int = 1, sticky: bool = True) -> tk.Frame:
         frame = tk.Frame(master)
-        frame.grid(row=row, column=col, rowspan=rowspan, columnspan=columnspan, sticky=App.STICKY_FRAME if sticky else None, **App.PADS, **App.IPADS)
+        frame.grid(row=row, column=col, rowspan=rowspan, columnspan=columnspan, sticky=STICKY if sticky else None, **PADS, **IPADS)
         return frame
 
     def create_entry(self, master: tk.Frame, row: int, col: int, width: int = None, textvariable: tk.StringVar = None) -> tk.Entry:
-        entry = tk.Entry(master, width=width if width else App.ENTRY_WIDTH, textvariable=textvariable if textvariable else None)
-        entry.grid(row=row, column=col, sticky=App.STICKY_FRAME, **App.PADS)
+        entry = tk.Entry(master, width=width if width else ENTRY_WIDTH, textvariable=textvariable if textvariable else None)
+        entry.grid(row=row, column=col, sticky=STICKY, **PADS)
         return entry
 
     def create_button(self, master: tk.Frame, row: int, column: int, text: str, command: Callable) -> tk.Button:
-        button = tk.Button(master, text=text, command=command, width=App.BUTTON_WIDTH)
-        button.grid(row=row, column=column, **App.PADS, **App.IPADS)
+        button = tk.Button(master, text=text, command=command, width=BUTTON_WIDTH)
+        button.grid(row=row, column=column, **PADS, **IPADS)
         button['font'] = self.font
         return button
 
     def create_checkbutton(self, master: tk.Frame, row: int, column: int, text: str, command: Callable, variable: tk.IntVar) -> tk.Checkbutton:
         checkbutton = tk.Checkbutton(master, text=text, command=command, variable=variable, onvalue=1, offvalue=0)
-        checkbutton.grid(row=row, column=column, **App.PADS)
+        checkbutton.grid(row=row, column=column, **PADS)
         return checkbutton
 
     def create_radiobutton(self, master: tk.Frame, row: int, column: int, text: str, variable: tk.IntVar, value: int) -> tk.Radiobutton:
         radiobutton = tk.Radiobutton(master, text=text, variable=variable, value=value)
-        radiobutton.grid(row=row, column=column, **App.PADS)
+        radiobutton.grid(row=row, column=column, **PADS)
         return radiobutton
 
     def create_listbox_with_scrollbar(self, master: tk.LabelFrame, row: int, col: int) -> tk.Listbox:
@@ -85,7 +86,7 @@ class App:
         scrollbar_x.grid(row=row+1, column=0, sticky=tk.EW)
         scrollbar_y.grid(row=0, column=col+1, sticky=tk.NS)
         listbox = tk.Listbox(master, xscrollcommand=scrollbar_x.set, yscrollcommand=scrollbar_y.set)
-        listbox.grid(row=row, column=col, sticky=tk.NSEW, **App.PADS)
+        listbox.grid(row=row, column=col, sticky=tk.NSEW, **PADS)
         scrollbar_x.config(command=listbox.xview)
         scrollbar_y.config(command=listbox.yview)
         return listbox
