@@ -13,8 +13,9 @@ from components.Listbox import Listbox
 
 
 NAME = 'QuickRename'
-ROOT_MINSIZE = {'width': 680, 'height': 500}
 FAVICON = 'icon\\favicon.ico'
+STATE = 'zoomed'
+ROOT_MINSIZE = {'width': 680, 'height': 500}
 FONT_FAMILY = 'Helvetica'
 FONT_SIZE = 10
 
@@ -37,7 +38,7 @@ class App:
         root.rowconfigure(0, weight=0)
         root.rowconfigure(1, weight=0)
         root.rowconfigure(2, weight=1)
-        root.state('zoomed')
+        root.state(STATE)
         root.minsize(**ROOT_MINSIZE)
         return root
 
