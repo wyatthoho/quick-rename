@@ -2,12 +2,12 @@ import tkinter as tk
 from tkinter import font
 from collections.abc import Callable
 
-import logic.logic as logic
+import logic.app_logic as logic
 
 
 NAME = 'QuickRename'
 ROOT_MINSIZE = {'width': 680, 'height': 500}
-LOGO_PATH = 'img\\favicon.ico'
+LOGO_PATH = 'icon\\favicon.ico'
 FONT_FAMILY = 'Helvetica'
 FONT_SIZE = 10
 PADS = {'padx': 4, 'pady': 4}

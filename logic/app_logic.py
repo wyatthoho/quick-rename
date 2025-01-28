@@ -3,8 +3,8 @@ import tkinter as tk
 from tkinter import filedialog
 from typing import TypedDict
 
-import utils.stringlist_utils as stringlist_utils
-import utils.widget_utils as widget_utils
+import utils.stringlist_operations as strlist_op
+import utils.widget_control as widget_ctrl
 
 
 class LogicWidgets(TypedDict):
@@ -42,7 +42,7 @@ def load_target_names(logic_widgets: LogicWidgets):
         names = [name for name in tgtnames if os.path.isfile(os.path.join(tgtdir, name))]
     else:
         names = [name for name in tgtnames if not os.path.isfile(os.path.join(tgtdir, name))]
-    widget_utils.update_listbox_content(listbox_read, names)
+    widget_ctrl.update_listbox_content(listbox_read, names)
 
 
 def config_replace(logic_widgets: LogicWidgets):
@@ -50,15 +50,15 @@ def config_replace(logic_widgets: LogicWidgets):
     entry_find = logic_widgets['entry_find']
     entry_replace = logic_widgets['entry_replace']
     enable = bool(intvar_replace.get())
-    widget_utils.toggle_widget_state(entry_find, enable)
-    widget_utils.toggle_widget_state(entry_replace, enable)
+    widget_ctrl.toggle_widget_state(entry_find, enable)
+    widget_ctrl.toggle_widget_state(entry_replace, enable)
 
 
 def config_suffix(logic_widgets: LogicWidgets):
     intvar_suffix = logic_widgets['intvar_suffix']
     entry_suffix = logic_widgets['entry_suffix']
     enable = bool(intvar_suffix.get())
-    widget_utils.toggle_widget_state(entry_suffix, enable)
+    widget_ctrl.toggle_widget_state(entry_suffix, enable)
 
 
 def config_order(logic_widgets: LogicWidgets):
@@ -69,11 +69,11 @@ def config_order(logic_widgets: LogicWidgets):
     button_up = logic_widgets['button_up']
     button_down = logic_widgets['button_down']
     enable = bool(intvar_make_order.get())
-    widget_utils.toggle_widget_state(radiobutton_prefix_1, enable)
-    widget_utils.toggle_widget_state(radiobutton_prefix_2, enable)
-    widget_utils.toggle_widget_state(radiobutton_prefix_3, enable)
-    widget_utils.toggle_widget_state(button_up, enable)
-    widget_utils.toggle_widget_state(button_down, enable)
+    widget_ctrl.toggle_widget_state(radiobutton_prefix_1, enable)
+    widget_ctrl.toggle_widget_state(radiobutton_prefix_2, enable)
+    widget_ctrl.toggle_widget_state(radiobutton_prefix_3, enable)
+    widget_ctrl.toggle_widget_state(button_up, enable)
+    widget_ctrl.toggle_widget_state(button_down, enable)
 
 
 def move_name(logic_widgets: LogicWidgets, inc: int):
@@ -94,7 +94,7 @@ def move_name(logic_widgets: LogicWidgets, inc: int):
         keys = list(names_dict.keys())
         keys.sort()
         names = [names_dict[key] for key in keys]
-        widget_utils.update_listbox_content(listbox_read, names)
+        widget_ctrl.update_listbox_content(listbox_read, names)
         listbox_read.select_set(id_next)
 
 
@@ -110,15 +110,15 @@ def preview_names(logic_widgets: LogicWidgets):
     intvar_sep = logic_widgets['intvar_sep']
     names = list(listbox_read.get(0, tk.END))
     if intvar_replace.get():
-        names = stringlist_utils.replace_names(names, entry_find.get(), entry_replace.get())
+        names = strlist_op.replace_names(names, entry_find.get(), entry_replace.get())
     if intvar_suffix.get():
-        names = stringlist_utils.add_suffix(names, entry_suffix.get())
+        names = strlist_op.add_suffix(names, entry_suffix.get())
     if intvar_make_order.get():
         separator = {1: '_', 2: '-', 3: ' '}[intvar_sep.get()]
-        names = stringlist_utils.reorder_names(names, separator)
-    widget_utils.update_listbox_content(listbox_preview, names)
-    idxs_duplicate = stringlist_utils.get_duplicate_indices(names)
-    widget_utils.highlight_duplicates(listbox_preview, idxs_duplicate)
+        names = strlist_op.reorder_names(names, separator)
+    widget_ctrl.update_listbox_content(listbox_preview, names)
+    idxs_duplicate = strlist_op.get_duplicate_indices(names)
+    widget_ctrl.highlight_duplicates(listbox_preview, idxs_duplicate)
 
 
 def run_rename(logic_widgets: LogicWidgets):
@@ -128,7 +128,7 @@ def run_rename(logic_widgets: LogicWidgets):
     tgt_dir_name = strvar_tgtdir.get()
     names_src = list(listbox_read.get(0, tk.END))
     names_dst = list(listbox_preview.get(0, tk.END))
-    idxs_duplicate = stringlist_utils.get_duplicate_indices(names_dst)
+    idxs_duplicate = strlist_op.get_duplicate_indices(names_dst)
     try:
         if idxs_duplicate:
             raise Exception('There are repeated names after renaming.')
