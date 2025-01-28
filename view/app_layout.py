@@ -8,8 +8,7 @@ import logic.app_logic as logic
 NAME = 'QuickRename'
 ROOT_MINSIZE = {'width': 680, 'height': 500}
 FAVICON = 'icon\\favicon.ico'
-# FONT_FAMILY = 'Helvetica'
-FONT_FAMILY = 'Times New Roman'
+FONT_FAMILY = 'Helvetica'
 FONT_SIZE = 10
 
 
@@ -45,13 +44,13 @@ class App:
         frame_up.rowconfigure(0, weight=1)
         frame_up.columnconfigure(0, weight=1)
         strvar_tgtdir = tk.StringVar()
-        comps.create_entry(frame_up, 0, 0, 50, strvar_tgtdir)
+        comps.create_entry(frame_up, 0, 0, self.font, 50, strvar_tgtdir)
 
         frame_down = comps.create_frame(labelframe, 1, 0)
         intvar_applyto = tk.IntVar(value=1)
-        comps.create_label(frame_down, 0, 0, 'Apply to:')
-        comps.create_radiobutton(frame_down, 0, 1, 'Files', intvar_applyto, 1)
-        comps.create_radiobutton(frame_down, 0, 2, 'Folders', intvar_applyto, 2)
+        comps.create_label(frame_down, 0, 0, 'Apply to:', self.font)
+        comps.create_radiobutton(frame_down, 0, 1, 'Files', self.font, intvar_applyto, 1)
+        comps.create_radiobutton(frame_down, 0, 2, 'Folders', self.font, intvar_applyto, 2)
 
         frame_right = comps.create_frame(labelframe, 0, 1, 2)
         comps.create_button(
@@ -74,42 +73,42 @@ class App:
         frame_up = comps.create_frame(labelframe, 0, 0)
         intvar_replace = tk.IntVar()
         comps.create_checkbutton(
-            frame_up, 0, 0, 'Replace text',
+            frame_up, 0, 0, 'Replace text', self.font,
             lambda: logic.config_replace(self.logic_widgets), intvar_replace
         )
-        comps.create_label(frame_up, 0, 1, 'Find:')
-        entry_find = comps.create_entry(frame_up, 0, 2)
+        comps.create_label(frame_up, 0, 1, 'Find:', self.font)
+        entry_find = comps.create_entry(frame_up, 0, 2, self.font)
         entry_find.config(state='disabled')
-        comps.create_label(frame_up, 0, 3, 'Replace:')
-        entry_replace = comps.create_entry(frame_up, 0, 4)
+        comps.create_label(frame_up, 0, 3, 'Replace:', self.font)
+        entry_replace = comps.create_entry(frame_up, 0, 4, self.font)
         entry_replace.config(state='disabled')
 
         frame_mid = comps.create_frame(labelframe, 1, 0)
         intvar_suffix = tk.IntVar()
         comps.create_checkbutton(
-            frame_mid, 0, 0, 'Add suffix',
+            frame_mid, 0, 0, 'Add suffix', self.font,
             lambda: logic.config_suffix(self.logic_widgets), intvar_suffix
         )
-        comps.create_label(frame_mid, 0, 1, 'Suffix:')
-        entry_suffix = comps.create_entry(frame_mid, 0, 2)
+        comps.create_label(frame_mid, 0, 1, 'Suffix:', self.font)
+        entry_suffix = comps.create_entry(frame_mid, 0, 2, self.font)
         entry_suffix.config(state='disabled')
 
         frame_down = comps.create_frame(labelframe, 2, 0)
         intvar_make_order = tk.IntVar()
         comps.create_checkbutton(
-            frame_down, 1, 0, 'Make an order',
+            frame_down, 1, 0, 'Make an order', self.font,
             lambda: logic.config_order(self.logic_widgets), intvar_make_order
         )
-        comps.create_label(frame_down, 1, 1, 'Sep:')
+        comps.create_label(frame_down, 1, 1, 'Sep:', self.font)
         intvar_sep = tk.IntVar(value=1)
         radiobutton_prefix_1 = comps.create_radiobutton(
-            frame_down, 1, 2, '_', intvar_sep, 1
+            frame_down, 1, 2, '_', self.font, intvar_sep, 1
         )
         radiobutton_prefix_2 = comps.create_radiobutton(
-            frame_down, 1, 3, '-', intvar_sep, 2
+            frame_down, 1, 3, '-', self.font, intvar_sep, 2
         )
         radiobutton_prefix_3 = comps.create_radiobutton(
-            frame_down, 1, 4, 'space', intvar_sep, 3
+            frame_down, 1, 4, 'space', self.font, intvar_sep, 3
         )
         radiobutton_prefix_1.config(state='disabled')
         radiobutton_prefix_2.config(state='disabled')
@@ -131,8 +130,8 @@ class App:
             self.root, 2, 0, 'Name list', self.font
         )
 
-        listbox_read = comps.create_listbox_with_scrollbar(labelframe, 0, 0)
-        listbox_preview = comps.create_listbox_with_scrollbar(labelframe, 0, 2)
+        listbox_read = comps.create_listbox_with_scrollbar(labelframe, 0, 0, self.font)
+        listbox_preview = comps.create_listbox_with_scrollbar(labelframe, 0, 2, self.font)
 
         frame_downleft = comps.create_frame(
             labelframe, 2, 0, columnspan=2, sticky=False
