@@ -39,9 +39,15 @@ def load_target_names(logic_widgets: LogicWidgets):
     tgtdir = strvar_tgtdir.get()
     tgtnames = os.listdir(tgtdir)
     if intvar_applyto.get() == 1:
-        names = [name for name in tgtnames if os.path.isfile(os.path.join(tgtdir, name))]
+        names = [
+            name for name in tgtnames
+            if os.path.isfile(os.path.join(tgtdir, name))
+        ]
     else:
-        names = [name for name in tgtnames if not os.path.isfile(os.path.join(tgtdir, name))]
+        names = [
+            name for name in tgtnames
+            if not os.path.isfile(os.path.join(tgtdir, name))
+        ]
     widget_ctrl.update_listbox_content(listbox_read, names)
 
 
@@ -110,7 +116,9 @@ def preview_names(logic_widgets: LogicWidgets):
     intvar_sep = logic_widgets['intvar_sep']
     names = list(listbox_read.get(0, tk.END))
     if intvar_replace.get():
-        names = strlist_op.replace_names(names, entry_find.get(), entry_replace.get())
+        names = strlist_op.replace_names(
+            names, entry_find.get(), entry_replace.get()
+        )
     if intvar_suffix.get():
         names = strlist_op.add_suffix(names, entry_suffix.get())
     if intvar_make_order.get():

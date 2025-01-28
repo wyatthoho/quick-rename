@@ -8,7 +8,7 @@ def replace_names(names: list[str], find_str: str, replace_str: str) -> list[str
 def add_suffix(names: list[str], suffix: str) -> list[str]:
     def add_to_base(name: str) -> str:
         base, sep, ext = name.rpartition('.')
-        return f'{base}{suffix}.{ext}' if sep else f'{name}{suffix}'  
+        return f'{base}{suffix}.{ext}' if sep else f'{name}{suffix}'
     return [add_to_base(name) for name in names]
 
 
