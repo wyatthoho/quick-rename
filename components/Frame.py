@@ -3,8 +3,8 @@ import tkinter as tk
 from typing import Union
 
 
-PADS = {'padx': 4, 'pady': 4}
-IPADS = {'ipadx': 1, 'ipady': 1}
+PADS = {'padx': 0, 'pady': 0}
+IPADS = {'ipadx': 0, 'ipady': 0}
 STICKY = tk.NSEW
 
 type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]
