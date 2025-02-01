@@ -43,9 +43,7 @@ class App:
         return root
 
     def create_label_frame_target_directory(self):
-        labelframe = LabelFrame(
-            self.root, 0, 0, 'Choose the directory', self.font
-        )
+        labelframe = LabelFrame(self.root, 0, 0, 'Target directory', self.font)
         labelframe.columnconfigure(0, weight=1)
 
         frame_up = Frame(labelframe, 0, 0)
@@ -61,10 +59,8 @@ class App:
         Radiobutton(frame_down, 0, 2, 'Folders', self.font, intvar_applyto, 2)
 
         frame_right = Frame(labelframe, 0, 1, 2)
-        function_choose = lambda: logic.choose_target_directory(self.logic_widgets)
-        function_read = lambda: logic.load_target_names(self.logic_widgets)
-        Button(frame_right, 0, 0, 'Choose', self.font, function_choose)
-        Button(frame_right, 1, 0, 'Read', self.font, function_read)
+        Button(frame_right, 0, 0, 'Choose', self.font, self.choose)
+        Button(frame_right, 1, 0, 'Read', self.font, self.read)
 
         self.logic_widgets['strvar_tgtdir'] = strvar_tgtdir
         self.logic_widgets['intvar_applyto'] = intvar_applyto
@@ -74,35 +70,32 @@ class App:
 
         frame_up = Frame(labelframe, 0, 0)
         intvar_replace = tk.IntVar()
-        function_replace = lambda: logic.config_replace(self.logic_widgets)
         Checkbutton(
             frame_up, 0, 0, 'Replace text', self.font,
-            function_replace, intvar_replace
+            self.replace, intvar_replace
         )
         Label(frame_up, 0, 1, 'Find:', self.font)
         entry_find = Entry(frame_up, 0, 2, self.font)
-        entry_find.config(state='disabled')
+        entry_find['state'] = tk.DISABLED
         Label(frame_up, 0, 3, 'Replace:', self.font)
         entry_replace = Entry(frame_up, 0, 4, self.font)
-        entry_replace.config(state='disabled')
+        entry_replace['state'] = tk.DISABLED
 
         frame_mid = Frame(labelframe, 1, 0)
         intvar_suffix = tk.IntVar()
-        function_suffix = lambda: logic.config_suffix(self.logic_widgets)
         Checkbutton(
             frame_mid, 0, 0, 'Add suffix', self.font,
-            function_suffix, intvar_suffix
+            self.suffix, intvar_suffix
         )
         Label(frame_mid, 0, 1, 'Suffix:', self.font)
         entry_suffix = Entry(frame_mid, 0, 2, self.font)
-        entry_suffix.config(state='disabled')
+        entry_suffix['state'] = tk.DISABLED
 
         frame_down = Frame(labelframe, 2, 0)
         intvar_make_order = tk.IntVar()
-        function_order = lambda: logic.config_order(self.logic_widgets)
         Checkbutton(
             frame_down, 1, 0, 'Make an order', self.font,
-            function_order, intvar_make_order
+            self.order, intvar_make_order
         )
         Label(frame_down, 1, 1, 'Sep:', self.font)
         intvar_sep = tk.IntVar(value=1)
@@ -115,9 +108,9 @@ class App:
         radiobutton_prefix_3 = Radiobutton(
             frame_down, 1, 4, 'space', self.font, intvar_sep, 3
         )
-        radiobutton_prefix_1.config(state='disabled')
-        radiobutton_prefix_2.config(state='disabled')
-        radiobutton_prefix_3.config(state='disabled')
+        radiobutton_prefix_1['state'] = tk.DISABLED
+        radiobutton_prefix_2['state'] = tk.DISABLED
+        radiobutton_prefix_3['state'] = tk.DISABLED
 
         self.logic_widgets['intvar_replace'] = intvar_replace
         self.logic_widgets['entry_find'] = entry_find
@@ -137,20 +130,26 @@ class App:
         listbox_preview = Listbox(labelframe, 0, 2, self.font)
 
         frame_downleft = Frame(labelframe, 2, 0, columnspan=2, sticky=False)
-        function_up = lambda: logic.move_name(self.logic_widgets, -1)
-        function_down = lambda: logic.move_name(self.logic_widgets, 1)
-        button_up = Button(frame_downleft, 0, 1, 'Up', self.font, function_up)
-        button_down = Button(frame_downleft, 0, 2, 'Down', self.font, function_down)
+        button_up = Button(frame_downleft, 0, 1, 'Up', self.font, self.up)
+        button_down = Button(frame_downleft, 0, 2, 'Down', self.font, self.down)
         button_up['state'] = tk.DISABLED
         button_down['state'] = tk.DISABLED
 
         frame_downright = Frame(labelframe, 2, 2, columnspan=2, sticky=False)
-        function_preview = lambda: logic.preview_names(self.logic_widgets)
-        function_rename = lambda: logic.run_rename(self.logic_widgets)
-        Button(frame_downright, 0, 1, 'Preview', self.font, function_preview)
-        Button(frame_downright, 0, 2, 'Run', self.font, function_rename)
+        Button(frame_downright, 0, 1, 'Preview', self.font, self.preview)
+        Button(frame_downright, 0, 2, 'Run', self.font, self.rename)
 
         self.logic_widgets['listbox_read'] = listbox_read
         self.logic_widgets['listbox_preview'] = listbox_preview
         self.logic_widgets['button_up'] = button_up
         self.logic_widgets['button_down'] = button_down
+
+    def choose(self): return logic.choose_target_directory(self.logic_widgets)
+    def read(self): return logic.load_target_names(self.logic_widgets)
+    def replace(self): return logic.config_replace(self.logic_widgets)
+    def suffix(self): return logic.config_suffix(self.logic_widgets)
+    def order(self): return logic.config_order(self.logic_widgets)
+    def up(self): return logic.move_name(self.logic_widgets, -1)
+    def down(self): return logic.move_name(self.logic_widgets, 1)
+    def preview(self): return logic.preview_names(self.logic_widgets)
+    def rename(self): return logic.run_rename(self.logic_widgets)
