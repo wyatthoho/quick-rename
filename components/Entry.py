@@ -16,7 +16,7 @@ class Entry(tk.Entry):
         super().__init__(
             master,
             width=width if width else ENTRY_WIDTH,
-            textvariable=textvariable if textvariable else None
+            textvariable=textvariable if textvariable else None,
+            font=font
         )
         self.grid(row=row, column=col, sticky=STICKY, **PADS, **IPADS)
-        self['font'] = font

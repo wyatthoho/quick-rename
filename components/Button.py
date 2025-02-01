@@ -15,7 +15,7 @@ type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]
 class Button(tk.Button):
     def __init__(self, master: master, row: int, col: int, text: str, font: tk.font, command: Callable):
         super().__init__(
-            master, text=text, command=command, width=BUTTON_WIDTH
+            master, text=text, font=font,
+            command=command, width=BUTTON_WIDTH
         )
         self.grid(row=row, column=col, sticky=STICKY, **PADS, **IPADS)
-        self['font'] = font

@@ -21,11 +21,10 @@ class Listbox(tk.Listbox):
         scrollbar_x.grid(row=row+1, column=0, sticky=tk.EW)
         scrollbar_y.grid(row=0, column=col+1, sticky=tk.NS)
         super().__init__(
-            master,
+            master, font=font,
             xscrollcommand=scrollbar_x.set,
             yscrollcommand=scrollbar_y.set
         )
         self.grid(row=row, column=col, sticky=STICKY, **PADS, **IPADS)
-        self['font'] = font
         scrollbar_x.config(command=self.xview)
         scrollbar_y.config(command=self.yview)
