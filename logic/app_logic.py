@@ -1,5 +1,5 @@
-import os
 import tkinter as tk
+from pathlib import Path
 from tkinter import filedialog
 from typing import TypedDict
 
@@ -36,18 +36,12 @@ def load_target_names(logic_widgets: LogicWidgets):
     strvar_tgtdir = logic_widgets['strvar_tgtdir']
     intvar_applyto = logic_widgets['intvar_applyto']
     listbox_read = logic_widgets['listbox_read']
-    tgtdir = strvar_tgtdir.get()
-    tgtnames = os.listdir(tgtdir)
+    tgtdir = Path(strvar_tgtdir.get())
+    tgtpaths = tgtdir.iterdir()
     if intvar_applyto.get() == 1:
-        names = [
-            name for name in tgtnames
-            if os.path.isfile(os.path.join(tgtdir, name))
-        ]
+        names = [path.name for path in tgtpaths if path.is_file()]
     else:
-        names = [
-            name for name in tgtnames
-            if not os.path.isfile(os.path.join(tgtdir, name))
-        ]
+        names = [path.name for path in tgtpaths if path.is_dir()]
     widget_ctrl.update_listbox_content(listbox_read, names)
 
 
@@ -133,7 +127,7 @@ def run_rename(logic_widgets: LogicWidgets):
     strvar_tgtdir = logic_widgets['strvar_tgtdir']
     listbox_read = logic_widgets['listbox_read']
     listbox_preview = logic_widgets['listbox_preview']
-    tgt_dir_name = strvar_tgtdir.get()
+    tgtdir = Path(strvar_tgtdir.get())
     names_src = list(listbox_read.get(0, tk.END))
     names_dst = list(listbox_preview.get(0, tk.END))
     idxs_duplicate = strlist_op.get_duplicate_indices(names_dst)
@@ -142,9 +136,9 @@ def run_rename(logic_widgets: LogicWidgets):
             raise Exception('There are repeated names after renaming.')
         else:
             for name_src, name_dst in zip(names_src, names_dst):
-                path_src = os.path.join(tgt_dir_name, name_src)
-                path_dst = os.path.join(tgt_dir_name, name_dst)
-                os.rename(src=path_src, dst=path_dst)
+                path_src = tgtdir.joinpath(name_src)
+                path_dst = tgtdir.joinpath(name_dst)
+                path_src.rename(path_dst)
     except Exception as e:
         tk.messagebox.showerror('Error', e.args[0])
         listbox_preview.delete(0, tk.END)
